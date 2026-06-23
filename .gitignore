@@ -1,0 +1,26 @@
+# Build outputs
+bin/
+obj/
+
+# User/editor files
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Logs
+*.log
+.MSBuild_Logs/
+
+# Local NuGet package cache
+.nuget/
+
+# Test results and coverage
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Publish/deployment outputs
+publish/
+artifacts/
