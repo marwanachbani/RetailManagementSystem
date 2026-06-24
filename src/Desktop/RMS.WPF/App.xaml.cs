@@ -87,7 +87,9 @@ public partial class App : Application
         loginViewModel.LoginSucceeded += (_, result) =>
         {
             Log.Information("User {UserName} logged in successfully.", result.UserName);
-            var mainWindow = new MainWindow();
+            var mainWindow = new MainWindow(
+                _host!.Services.GetRequiredService<MainWindowViewModel>()
+);
             mainWindow.Show();
             loginWindow.Close();
         };
