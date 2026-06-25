@@ -34,7 +34,10 @@ public sealed record StoredEvent(
     string EventType,
     string PayloadJson,
     DateTime OccurredOn,
-    int Version);
+    int Version)
+{
+    private StoredEvent() : this(default, default, "", "", "", default, 0) { }
+}
 
 public interface IEventStore
 {

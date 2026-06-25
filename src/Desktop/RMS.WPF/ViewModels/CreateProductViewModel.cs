@@ -10,6 +10,7 @@ public sealed class CreateProductViewModel : ProductFormViewModelBase
     public CreateProductViewModel(IMediator mediator) : base(mediator)
     {
         SaveCommand = new RelayCommand(_ => _ = SaveAsync());
+        _ = LoadCategoriesAsync();
     }
 
     public ICommand SaveCommand { get; }

@@ -66,17 +66,23 @@
 
             <DataGrid.Columns>
 
+                <DataGridTextColumn Header="Product Code"
+                                    Binding="{Binding ProductCode}" />
+
                 <DataGridTextColumn Header="Name"
                                     Binding="{Binding Name}" />
 
                 <DataGridTextColumn Header="Barcode"
                                     Binding="{Binding Barcode}" />
 
-                <DataGridTextColumn Header="Price"
+                <DataGridTextColumn Header="Category"
+                                    Binding="{Binding CategoryName}" />
+
+                <DataGridTextColumn Header="Sale Price"
                                     Binding="{Binding SalePrice}" />
 
-                <DataGridTextColumn Header="Stock"
-                                    Binding="{Binding StockQuantity}" />
+                <DataGridTextColumn Header="Cost Price"
+                                    Binding="{Binding CostPrice}" />
 
                 <DataGridCheckBoxColumn Header="Active"
                                         Binding="{Binding IsActive}" />

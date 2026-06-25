@@ -19,6 +19,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\BuildingBlocks\RMS.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\Infrastructure\RMS.Modules.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Products\Application\RMS.Modules.Products.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Products\Infrastructure\RMS.Modules.Products.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -10,7 +10,7 @@ public partial class EditProductWindow : Window
 
     public EditProductWindow(EditProductViewModel viewModel)
     {
-        
+        InitializeComponent();
 
         _viewModel = viewModel;
         DataContext = _viewModel;

@@ -20,6 +20,35 @@ public sealed class Product : AggregateRoot<Guid>
 
     private Product() { }
 
+    public static Product Rehydrate(
+        Guid id,
+        string productCode,
+        string name,
+        string? description,
+        Barcode barcode,
+        Guid categoryId,
+        Money salePrice,
+        Money costPrice,
+        bool isActive,
+        DateTime createdAt,
+        DateTime? updatedAt)
+    {
+        return new Product
+        {
+            Id = id,
+            ProductCode = productCode,
+            Name = name,
+            Description = description,
+            Barcode = barcode,
+            CategoryId = categoryId,
+            SalePrice = salePrice,
+            CostPrice = costPrice,
+            IsActive = isActive,
+            CreatedAt = createdAt,
+            UpdatedAt = updatedAt
+        };
+    }
+
     public static Product Create(
         Guid id,
         string name,

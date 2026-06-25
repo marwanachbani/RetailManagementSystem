@@ -6,7 +6,6 @@
              mc:Ignorable="d">
 
     <Grid>
-        <!-- This is basically your ProductListWindow UI but inside a view -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -56,10 +55,12 @@
                   IsReadOnly="True">
 
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Product Code" Binding="{Binding ProductCode}" />
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" />
-                <DataGridTextColumn Header="Price" Binding="{Binding SalePrice}" />
-                <DataGridTextColumn Header="Stock" Binding="{Binding StockQuantity}" />
+                <DataGridTextColumn Header="Category" Binding="{Binding CategoryName}" />
+                <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice}" />
+                <DataGridTextColumn Header="Cost Price" Binding="{Binding CostPrice}" />
                 <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}" />
             </DataGrid.Columns>
         </DataGrid>

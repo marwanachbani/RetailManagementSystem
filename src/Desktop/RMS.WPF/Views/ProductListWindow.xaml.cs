@@ -7,7 +7,7 @@ public partial class ProductListWindow : Window
 {
     public ProductListWindow(ProductListViewModel viewModel)
     {
-        
+        InitializeComponent();
         DataContext = viewModel;
     }
 }

@@ -14,9 +14,15 @@ public sealed record ProductReadModel(
     decimal CostPrice,
     bool IsActive,
     DateTime CreatedAt,
-    DateTime? UpdatedAt);
+    DateTime? UpdatedAt)
+{
+    private ProductReadModel() : this(default, "", "", null, "", default, "", 0, 0, false, default, null) { }
+}
 
-public sealed record CategoryReadModel(Guid Id, string Name, string? Description);
+public sealed record CategoryReadModel(Guid Id, string Name, string? Description)
+{
+    private CategoryReadModel() : this(default, "", null) { }
+}
 
 public sealed record PagedResult<T>(IReadOnlyList<T> Items, int PageNumber, int PageSize, int TotalCount)
 {

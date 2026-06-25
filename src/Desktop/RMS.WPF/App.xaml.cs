@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using Dapper;
 using FluentMigrator.Runner;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,12 +10,15 @@ using RMS.BuildingBlocks.Contracts;
 using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.EventStore;
 using RMS.BuildingBlocks.Logging;
+using RMS.BuildingBlocks.Persistence;
 using RMS.Modules.Identity.Application;
 using RMS.Modules.Identity.Application.Contracts;
 using RMS.Modules.Identity.Domain.Entities;
 using RMS.Modules.Identity.Domain.Services;
 using RMS.Modules.Identity.Domain.ValueObjects;
 using RMS.Modules.Identity.Infrastructure;
+using RMS.Modules.Products.Application;
+using RMS.Modules.Products.Infrastructure;
 using RMS.WPF.ViewModels;
 using RMS.WPF.Views;
 using Serilog;
@@ -45,6 +49,15 @@ public partial class App : Application
         Mode = SqliteOpenMode.ReadWriteCreate,
         ForeignKeys = true
     }.ToString();
+
+    static App()
+    {
+        // Register SQLite GUID type handlers once per AppDomain before any Dapper queries.
+        SqlMapper.AddTypeHandler(new SqliteGuidTypeHandler());
+        SqlMapper.AddTypeHandler(new SqliteNullableGuidTypeHandler());
+        SqlMapper.RemoveTypeMap(typeof(Guid));
+        SqlMapper.RemoveTypeMap(typeof(Guid?));
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -142,8 +155,22 @@ public partial class App : Application
         services.AddIdentityInfrastructure();
         services.AddIdentityMigrations(ConnectionString);
 
+        // Products module — fully wired vertical slice.
+        services.AddProductsModule();
+        services.AddProductsInfrastructure();
+        services.AddProductsMigrations(ConnectionString);
+
         // WPF view models.
         services.AddTransient<LoginViewModel>();
+        services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<ProductListViewModel>();
+        services.AddTransient<CreateProductViewModel>();
+        services.AddTransient<EditProductViewModel>();
+
+        // WPF views.
+        services.AddTransient<ProductListWindow>();
+        services.AddTransient<CreateProductWindow>();
+        services.AddTransient<EditProductWindow>();
     }
 }
 
