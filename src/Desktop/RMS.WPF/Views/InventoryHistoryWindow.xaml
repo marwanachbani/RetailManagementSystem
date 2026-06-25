@@ -1,0 +1,42 @@
+<Window x:Class="RMS.WPF.Views.InventoryHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Inventory History"
+        Height="500"
+        Width="800"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Transaction History" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="1" Text="{Binding StatusMessage}" Foreground="Gray" Margin="0,0,0,10"/>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Transactions}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Timestamp"
+                                    Binding="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd HH:mm}}" />
+                <DataGridTextColumn Header="Before"
+                                    Binding="{Binding QuantityBefore}" />
+                <DataGridTextColumn Header="After"
+                                    Binding="{Binding QuantityAfter}" />
+                <DataGridTextColumn Header="Change"
+                                    Binding="{Binding ChangeAmount}" />
+                <DataGridTextColumn Header="Reason"
+                                    Binding="{Binding Reason}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

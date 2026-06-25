@@ -7,14 +7,17 @@ public sealed class MainWindowViewModel : ViewModelBase
 {
     private object? _currentViewModel;
 
-    public MainWindowViewModel(ProductListViewModel productListViewModel)
+    public MainWindowViewModel(ProductListViewModel productListViewModel, InventoryListViewModel inventoryListViewModel)
     {
         ProductListViewModel = productListViewModel;
+        InventoryListViewModel = inventoryListViewModel;
         NavigateProductsCommand = new RelayCommand(_ => CurrentViewModel = ProductListViewModel);
+        NavigateInventoryCommand = new RelayCommand(_ => CurrentViewModel = InventoryListViewModel);
         CurrentViewModel = ProductListViewModel;
     }
 
     public ProductListViewModel ProductListViewModel { get; }
+    public InventoryListViewModel InventoryListViewModel { get; }
 
     public object? CurrentViewModel
     {
@@ -27,4 +30,5 @@ public sealed class MainWindowViewModel : ViewModelBase
     }
 
     public ICommand NavigateProductsCommand { get; }
+    public ICommand NavigateInventoryCommand { get; }
 }

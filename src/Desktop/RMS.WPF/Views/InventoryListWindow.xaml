@@ -1,0 +1,111 @@
+<Window x:Class="RMS.WPF.Views.InventoryListWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Inventory"
+        Height="650"
+        Width="1000"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Bar -->
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,10">
+            <TextBlock Text="Inventory"
+                       FontSize="22"
+                       FontWeight="Bold"
+                       DockPanel.Dock="Left"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <TextBox Width="200"
+                         Margin="0,0,10,0"
+                         Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalContentAlignment="Center"/>
+
+                <Button Content="Search"
+                        Width="80"
+                        Margin="0,0,5,0"
+                        Command="{Binding SearchCommand}"/>
+
+                <Button Content="Refresh"
+                        Width="80"
+                        Margin="0,0,5,0"
+                        Command="{Binding RefreshCommand}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Status -->
+        <TextBlock Grid.Row="1"
+                   Text="{Binding StatusMessage}"
+                   Foreground="Gray"
+                   Margin="0,0,0,10"/>
+
+        <!-- Table -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Items}"
+                  SelectedItem="{Binding SelectedItem}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Product ID"
+                                    Binding="{Binding ProductId}" />
+                <DataGridTextColumn Header="Current Quantity"
+                                    Binding="{Binding CurrentQuantity}" />
+                <DataGridTextColumn Header="Low Stock Threshold"
+                                    Binding="{Binding LowStockThreshold}" />
+                <DataGridCheckBoxColumn Header="Active"
+                                        Binding="{Binding IsActive}" />
+                <DataGridTextColumn Header="Last Updated"
+                                    Binding="{Binding UpdatedAt, StringFormat={}{0:yyyy-MM-dd HH:mm}}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Bottom Bar -->
+        <DockPanel Grid.Row="3" Margin="0,10,0,0">
+            <StackPanel Orientation="Horizontal"
+                        DockPanel.Dock="Left">
+                <Button Content="Adjust Stock"
+                        Width="120"
+                        Margin="0,0,5,0"
+                        Command="{Binding AdjustStockCommand}"/>
+
+                <Button Content="View History"
+                        Width="120"
+                        Command="{Binding ViewHistoryCommand}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button Content="Previous"
+                        Width="100"
+                        Margin="0,0,5,0"
+                        Command="{Binding PreviousPageCommand}"/>
+
+                <TextBlock Text="{Binding PageNumber}"
+                           VerticalAlignment="Center"
+                           Margin="5"/>
+
+                <TextBlock Text="/"
+                           VerticalAlignment="Center"/>
+
+                <TextBlock Text="{Binding TotalPages}"
+                           VerticalAlignment="Center"
+                           Margin="5"/>
+
+                <Button Content="Next"
+                        Width="100"
+                        Command="{Binding NextPageCommand}"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>

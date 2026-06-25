@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\src\BuildingBlocks\RMS.BuildingBlocks.csproj" />
     <ProjectReference Include="..\..\src\Modules\Identity\Domain\RMS.Modules.Identity.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Products\Domain\RMS.Modules.Products.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Inventory\Domain\RMS.Modules.Inventory.Domain.csproj" />
   </ItemGroup>
 
 </Project>
