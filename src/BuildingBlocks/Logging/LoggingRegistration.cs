@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace RMS.BuildingBlocks.Logging;
@@ -24,7 +25,11 @@ public static class LoggingRegistration
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}")
             .CreateLogger();
 
-        services.AddLogging(builder => builder.AddSerilog(dispose: true));
+        services.AddLogging(builder =>
+        {
+            builder.ClearProviders();
+            builder.AddSerilog(dispose: true);
+        });
 
         return services;
     }

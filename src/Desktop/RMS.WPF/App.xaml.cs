@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows;
 using Dapper;
 using FluentMigrator.Runner;
+using FluentMigrator.Runner.Processors;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,7 +37,7 @@ public partial class App : Application
     private IHost? _host;
 
     public static readonly string ProgramDataDirectory =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "RetailManagementSystem");
 
     public static readonly string DatabasePath = Path.Combine(ProgramDataDirectory, "rms.db");
@@ -149,6 +150,7 @@ public partial class App : Application
         services.AddSingleton<IDbConnectionFactory>(_ => new SqliteConnectionFactory(DatabasePath));
         services.AddSingleton<IEventBus, InProcessEventBus>();
         services.AddSingleton<IEventStore, SqliteEventStore>();
+        services.Configure<SelectingProcessorAccessorOptions>(options => options.ProcessorId = "sqlite");
 
         // Identity module — fully wired vertical slice.
         services.AddIdentityModule();

@@ -1,4 +1,5 @@
 using FluentMigrator.Runner;
+using FluentMigrator.Runner.Processors;
 using Microsoft.Extensions.DependencyInjection;
 using RMS.Modules.Products.Application.Contracts;
 using RMS.Modules.Products.Infrastructure.Persistence;
@@ -17,6 +18,7 @@ public static class ProductsInfrastructureRegistration
     public static IServiceCollection AddProductsMigrations(this IServiceCollection services, string connectionString)
     {
         services.AddFluentMigratorCore()
+            .Configure<SelectingProcessorAccessorOptions>(options => options.ProcessorId = "sqlite")
             .ConfigureRunner(rb => rb
                 .AddSQLite()
                 .WithGlobalConnectionString(connectionString)

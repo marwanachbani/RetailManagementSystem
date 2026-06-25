@@ -4,6 +4,7 @@ using RMS.Modules.Identity.Domain.Services;
 using RMS.Modules.Identity.Infrastructure.Persistence;
 using RMS.Modules.Identity.Infrastructure.Security;
 using FluentMigrator.Runner;
+using FluentMigrator.Runner.Processors;
 
 namespace RMS.Modules.Identity.Infrastructure;
 
@@ -28,6 +29,7 @@ public static class IdentityInfrastructureRegistration
     public static IServiceCollection AddIdentityMigrations(this IServiceCollection services, string connectionString)
     {
         services.AddFluentMigratorCore()
+            .Configure<SelectingProcessorAccessorOptions>(options => options.ProcessorId = "sqlite")
             .ConfigureRunner(rb => rb
                 .AddSQLite()
                 .WithGlobalConnectionString(connectionString)

@@ -20,7 +20,7 @@ using Xunit;
 
 namespace RMS.IntegrationTests.Products;
 
-public class TestDatabaseFixture : IDisposable
+public partial class TestDatabaseFixture : IDisposable
 {
     private readonly string _dbFilePath;
     private readonly ServiceProvider _serviceProvider;
@@ -105,6 +105,7 @@ public class ProductsIntegrationTestBase
     public ProductsIntegrationTestBase(TestDatabaseFixture fixture)
     {
         Fixture = fixture;
+        Fixture.ResetState();
     }
 
     protected IProductReadStore ReadStore => Fixture.Services.GetRequiredService<IProductReadStore>();
@@ -120,5 +121,15 @@ public class ProductsIntegrationTestBase
             categoryId ?? CreateProductsTablesMigration.ElectronicsCategoryId,
             Money.Create(100),
             Money.Create(50));
+    }
+}
+
+public partial class TestDatabaseFixture
+{
+    public void ResetState()
+    {
+        using var connection = _serviceProvider.GetRequiredService<IDbConnectionFactory>().CreateConnection();
+        connection.Execute("DELETE FROM EventStore;");
+        connection.Execute("DELETE FROM Products;");
     }
 }
