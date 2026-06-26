@@ -5,6 +5,7 @@ using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Validation;
 using RMS.Modules.Inventory.Application.EventHandlers;
 using RMS.Modules.Products.Application;
+using RMS.Modules.Sales.Application;
 
 namespace RMS.Modules.Inventory.Application;
 
@@ -23,6 +24,10 @@ public static class InventoryModuleRegistration
         // Register integration event handlers that bridge Products module events to Inventory actions.
         services.AddSingleton<IIntegrationEventHandler<ProductCreatedIntegrationEvent>, ProductCreatedEventHandler>();
         services.AddSingleton<IIntegrationEventHandler<ProductDeactivatedIntegrationEvent>, ProductDeactivatedEventHandler>();
+
+        // Register integration event handlers that bridge Sales module events to Inventory actions.
+        services.AddSingleton<IIntegrationEventHandler<StockReductionRequestedEvent>, StockReductionRequestedHandler>();
+        services.AddSingleton<IIntegrationEventHandler<StockRestorationRequestedEvent>, StockRestorationRequestedHandler>();
 
         return services;
     }

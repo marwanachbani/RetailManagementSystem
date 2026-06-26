@@ -15,5 +15,6 @@
     <ProjectReference Include="..\..\..\BuildingBlocks\RMS.BuildingBlocks.csproj" />
     <ProjectReference Include="..\Domain\RMS.Modules.Inventory.Domain.csproj" />
     <ProjectReference Include="..\..\Products\Application\RMS.Modules.Products.Application.csproj" />
+    <ProjectReference Include="..\..\Sales\Application\RMS.Modules.Sales.Application.csproj" />
   </ItemGroup>
 </Project>

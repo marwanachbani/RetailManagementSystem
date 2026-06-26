@@ -13,6 +13,9 @@
             <DataTemplate DataType="{x:Type viewModels:InventoryListViewModel}">
                 <views:InventoryListView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:SalesViewModel}">
+                <views:SalesView />
+            </DataTemplate>
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -38,6 +41,12 @@
                             Margin="0,0,0,8" />
                     <Button Content="Inventory"
                             Command="{Binding NavigateInventoryCommand}"
+                            Height="40"
+                            HorizontalContentAlignment="Left"
+                            Padding="12,0"
+                            Margin="0,0,0,8" />
+                    <Button Content="Sales"
+                            Command="{Binding NavigateSalesCommand}"
                             Height="40"
                             HorizontalContentAlignment="Left"
                             Padding="12,0"

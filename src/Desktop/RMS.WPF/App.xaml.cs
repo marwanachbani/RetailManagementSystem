@@ -22,9 +22,13 @@ using RMS.Modules.Identity.Infrastructure;
 using RMS.Modules.Inventory.Application;
 
 using RMS.Modules.Inventory.Infrastructure;
-using RMS.Modules.Products.Application;
-using RMS.Modules.Products.Infrastructure;
+using RMS.Modules.Products.Application;
+using RMS.Modules.Sales.Application;
+using RMS.Modules.Products.Infrastructure;
+using RMS.Modules.Sales.Infrastructure;
+using RMS.Modules.Sales.Infrastructure.ReceiptGeneration;
 using RMS.WPF.ViewModels;
+using RMS.WPF.ReceiptGeneration;
 using RMS.WPF.Views;
 using Serilog;
 
@@ -236,6 +240,8 @@ public partial class App : Application
         services.AddProductsInfrastructure();
         services.AddProductsMigrations(ConnectionString);
 
+        services.AddSingleton<IReceiptGenerator, WpfReceiptGenerator>();
+
         // Inventory module — fully wired vertical slice.
         services.AddInventoryModule();
         services.AddInventoryInfrastructure();
@@ -248,7 +254,10 @@ public partial class App : Application
         services.AddTransient<CreateProductViewModel>();
         services.AddTransient<EditProductViewModel>();
 
-        services.AddTransient<InventoryListViewModel>();
+        services.AddTransient<InventoryListViewModel>();
+        services.AddTransient<SalesViewModel>();
+        services.AddTransient<CreateSaleViewModel>();
+        services.AddTransient<SalesHistoryViewModel>();
 
         services.AddTransient<StockAdjustmentViewModel>();
 
