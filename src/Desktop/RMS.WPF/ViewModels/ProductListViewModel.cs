@@ -1,9 +1,8 @@
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Input;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using RMS.Modules.Products.Application.Contracts;
-using RMS.Modules.Products.Application.DeactivateProduct;
 using RMS.Modules.Products.Application.GetProductsPaged;
 using RMS.WPF.Commands;
 using RMS.WPF.Views;
@@ -13,154 +12,102 @@ namespace RMS.WPF.ViewModels;
 public sealed class ProductListViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
-    private readonly IServiceProvider _services;
-    private string? _searchTerm;
-    private ProductReadModel? _selectedProduct;
-    private string? _statusMessage;
-    private int _pageNumber = 1;
-    private int _totalPages = 1;
+    private readonly IServiceProvider _serviceProvider;
+    private ObservableCollection<ProductReadModel> _products = new();
+    private string _searchText = string.Empty;
+    private bool _showInactive;
+    private bool _isLoading;
+    private bool _hasData;
 
-    public ProductListViewModel(IMediator mediator, IServiceProvider services)
+    public ProductListViewModel(IMediator mediator, IServiceProvider serviceProvider)
     {
         _mediator = mediator;
-        _services = services;
-        RefreshCommand = new RelayCommand(_ => _ = LoadAsync());
-        SearchCommand = new RelayCommand(_ => _ = SearchAsync());
-        AddCommand = new RelayCommand(_ => OpenCreateDialog());
-        EditCommand = new RelayCommand(_ => OpenEditDialog(), _ => SelectedProduct is not null);
-        DeactivateCommand = new RelayCommand(_ => _ = DeactivateAsync(), _ => SelectedProduct is not null && SelectedProduct.IsActive);
-        NextPageCommand = new RelayCommand(_ => _ = NextPageAsync(), _ => PageNumber < TotalPages);
-        PreviousPageCommand = new RelayCommand(_ => _ = PreviousPageAsync(), _ => PageNumber > 1);
-        _ = LoadAsync();
+        _serviceProvider = serviceProvider;
+        SearchCommand = new RelayCommand(_ => _ = LoadProductsAsync());
+        ClearFilterCommand = new RelayCommand(_ => ClearFilter());
+        CreateProductCommand = new RelayCommand(_ => _ = CreateProductAsync());
+        EditProductCommand = new RelayCommand(o => _ = EditProductAsync((Guid)o!));
+        _ = LoadProductsAsync();
     }
 
-    public ObservableCollection<ProductReadModel> Products { get; } = new();
-    public int PageSize { get; } = 25;
-
-    public string? SearchTerm
+    public ObservableCollection<ProductReadModel> Products
     {
-        get => _searchTerm;
-        set
-        {
-            _searchTerm = value;
-            OnPropertyChanged();
-        }
+        get => _products;
+        private set { _products = value; OnPropertyChanged(); }
     }
 
-    public ProductReadModel? SelectedProduct
+    public string SearchText
     {
-        get => _selectedProduct;
-        set
-        {
-            _selectedProduct = value;
-            OnPropertyChanged();
-            CommandManager.InvalidateRequerySuggested();
-        }
+        get => _searchText;
+        set { _searchText = value; OnPropertyChanged(); }
     }
 
-    public string? StatusMessage
+    public bool ShowInactive
     {
-        get => _statusMessage;
-        private set
-        {
-            _statusMessage = value;
-            OnPropertyChanged();
-        }
+        get => _showInactive;
+        set { _showInactive = value; OnPropertyChanged(); _ = LoadProductsAsync(); }
     }
 
-    public int PageNumber
+    public bool IsLoading
     {
-        get => _pageNumber;
-        private set
-        {
-            _pageNumber = value;
-            OnPropertyChanged();
-        }
+        get => _isLoading;
+        private set { _isLoading = value; OnPropertyChanged(); }
     }
 
-    public int TotalPages
+    public bool HasData
     {
-        get => _totalPages;
-        private set
-        {
-            _totalPages = value;
-            OnPropertyChanged();
-            CommandManager.InvalidateRequerySuggested();
-        }
+        get => _hasData;
+        private set { _hasData = value; OnPropertyChanged(); }
     }
 
-    public ICommand RefreshCommand { get; }
     public ICommand SearchCommand { get; }
-    public ICommand AddCommand { get; }
-    public ICommand EditCommand { get; }
-    public ICommand DeactivateCommand { get; }
-    public ICommand NextPageCommand { get; }
-    public ICommand PreviousPageCommand { get; }
+    public ICommand ClearFilterCommand { get; }
+    public ICommand CreateProductCommand { get; }
+    public ICommand EditProductCommand { get; }
 
-    public async Task LoadAsync()
+    public async Task LoadProductsAsync()
     {
-        var result = await _mediator.Send(new GetProductsPagedQuery(PageNumber, PageSize, SearchTerm, false));
-        if (result.IsFailure)
+        IsLoading = true;
+        try
         {
-            StatusMessage = result.Error;
-            return;
+            var query = new GetProductsPagedQuery(
+                PageNumber: 1,
+                PageSize: 500,
+                SearchTerm: string.IsNullOrWhiteSpace(SearchText) ? null : SearchText.Trim(),
+                IncludeInactive: ShowInactive);
+            var result = await _mediator.Send(query);
+            Products = new ObservableCollection<ProductReadModel>(result.Value.Items);
+            HasData = Products.Count > 0;
         }
-
-        Products.Clear();
-        foreach (var product in result.Value.Items)
-            Products.Add(product);
-
-        TotalPages = Math.Max(1, result.Value.TotalPages);
-        StatusMessage = $"{result.Value.TotalCount} products";
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
-    private async Task SearchAsync()
+    private void ClearFilter()
     {
-        PageNumber = 1;
-        await LoadAsync();
+        SearchText = string.Empty;
+        ShowInactive = false;
+        _ = LoadProductsAsync();
     }
 
-    private async Task NextPageAsync()
+    private async Task CreateProductAsync()
     {
-        PageNumber++;
-        await LoadAsync();
+        var dialog = _serviceProvider.GetRequiredService<CreateProductWindow>();
+        if (dialog.ShowDialog() == true)
+        {
+            await LoadProductsAsync();
+        }
     }
 
-    private async Task PreviousPageAsync()
+    private async Task EditProductAsync(Guid id)
     {
-        PageNumber--;
-        await LoadAsync();
-    }
-
-    private void OpenCreateDialog()
-    {
-        var window = (CreateProductWindow)_services.GetService(typeof(CreateProductWindow))!;
-        if (window.ShowDialog() == true)
-            _ = LoadAsync();
-    }
-
-    private void OpenEditDialog()
-    {
-        if (SelectedProduct is null)
-            return;
-
-        var window = (EditProductWindow)_services.GetService(typeof(EditProductWindow))!;
-        window.LoadProduct(SelectedProduct.Id);
-        if (window.ShowDialog() == true)
-            _ = LoadAsync();
-    }
-
-    private async Task DeactivateAsync()
-    {
-        if (SelectedProduct is null)
-            return;
-
-        var confirm = MessageBox.Show($"Deactivate {SelectedProduct.Name}?", "Deactivate product", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        if (confirm != MessageBoxResult.Yes)
-            return;
-
-        var result = await _mediator.Send(new DeactivateProductCommand(SelectedProduct.Id));
-        StatusMessage = result.IsSuccess ? "Product deactivated." : result.Error;
-        await LoadAsync();
+        var dialog = _serviceProvider.GetRequiredService<EditProductWindow>();
+        dialog.LoadProduct(id);
+        if (dialog.ShowDialog() == true)
+        {
+            await LoadProductsAsync();
+        }
     }
 }

@@ -7,20 +7,24 @@ public sealed class MainWindowViewModel : ViewModelBase
 {
     private object? _currentViewModel;
 
-    public MainWindowViewModel(ProductListViewModel productListViewModel, InventoryListViewModel inventoryListViewModel, SalesViewModel salesViewModel)
+    public MainWindowViewModel(
+        DashboardViewModel dashboardViewModel,
+        ProductListViewModel productListViewModel,
+        InventoryListViewModel inventoryListViewModel)
     {
+        DashboardViewModel = dashboardViewModel;
         ProductListViewModel = productListViewModel;
         InventoryListViewModel = inventoryListViewModel;
-        SalesViewModel = salesViewModel;
+        NavigateDashboardCommand = new RelayCommand(_ => CurrentViewModel = DashboardViewModel);
         NavigateProductsCommand = new RelayCommand(_ => CurrentViewModel = ProductListViewModel);
         NavigateInventoryCommand = new RelayCommand(_ => CurrentViewModel = InventoryListViewModel);
-        NavigateSalesCommand = new RelayCommand(_ => CurrentViewModel = SalesViewModel);
-        CurrentViewModel = ProductListViewModel;
+        LogoutCommand = new RelayCommand(_ => _ = LogoutAsync());
+        CurrentViewModel = DashboardViewModel;
     }
 
+    public DashboardViewModel DashboardViewModel { get; }
     public ProductListViewModel ProductListViewModel { get; }
     public InventoryListViewModel InventoryListViewModel { get; }
-    public SalesViewModel SalesViewModel { get; }
 
     public object? CurrentViewModel
     {
@@ -32,7 +36,16 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public ICommand NavigateDashboardCommand { get; }
     public ICommand NavigateProductsCommand { get; }
     public ICommand NavigateInventoryCommand { get; }
-    public ICommand NavigateSalesCommand { get; }
+    public ICommand LogoutCommand { get; }
+
+    private Task LogoutAsync()
+    {
+        // In a real app, this would show a confirmation dialog and restart to login
+        // For now, just navigate back to dashboard as a safe default
+        CurrentViewModel = DashboardViewModel;
+        return Task.CompletedTask;
+    }
 }

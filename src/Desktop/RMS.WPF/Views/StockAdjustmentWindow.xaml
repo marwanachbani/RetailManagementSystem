@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Stock Adjustment"
-        Height="400"
-        Width="450"
+        Height="450"
+        Width="480"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="{StaticResource BackgroundBrush}">
 
-    <Grid Margin="20">
+    <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -25,26 +26,30 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{Binding ProductInfo}" FontWeight="Bold" FontSize="14" Margin="0,0,0,15"/>
+        <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <TextBlock Text="{Binding ProductInfo}" FontWeight="Bold" FontSize="16" Foreground="{StaticResource TextPrimaryBrush}"/>
+        </Border>
 
-        <TextBlock Grid.Row="1" Text="{Binding CurrentQuantity, StringFormat='Current Quantity: {0}'}" Margin="0,0,0,10"/>
+        <TextBlock Grid.Row="1" Text="{Binding CurrentQuantity, StringFormat='Current Quantity: {0}'}" Margin="0,0,0,10" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
 
-        <TextBlock Grid.Row="2" Text="Operation:" Margin="0,0,0,5"/>
-        <ComboBox Grid.Row="3" ItemsSource="{Binding Operations}" SelectedItem="{Binding SelectedOperation}" Margin="0,0,0,15"/>
+        <TextBlock Grid.Row="2" Text="Operation:" Margin="0,0,0,5" Foreground="{StaticResource TextSecondaryBrush}"/>
+        <ComboBox Grid.Row="3" ItemsSource="{Binding Operations}" SelectedItem="{Binding SelectedOperation}" Style="{StaticResource ModernComboBoxStyle}" Margin="0,0,0,15"/>
 
-        <TextBlock Grid.Row="4" Text="Amount / New Quantity:" Margin="0,0,0,5"/>
-        <TextBox Grid.Row="5" Text="{Binding AdjustmentAmount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5"/>
+        <TextBlock Grid.Row="4" Text="Amount / New Quantity:" Margin="0,0,0,5" Foreground="{StaticResource TextSecondaryBrush}"/>
+        <TextBox Grid.Row="5" Text="{Binding AdjustmentAmount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,0,5"/>
 
-        <TextBlock Grid.Row="6" Text="{Binding NewQuantity, StringFormat='New Quantity: {0}'}" Margin="0,0,0,15"/>
+        <TextBlock Grid.Row="6" Text="{Binding NewQuantity, StringFormat='New Quantity: {0}'}" Margin="0,0,0,15" FontSize="14" Foreground="{StaticResource PrimaryBrush}"/>
 
-        <TextBlock Grid.Row="7" Text="Reason:" Margin="0,0,0,5"/>
-        <TextBox Grid.Row="8" Text="{Binding Reason, UpdateSourceTrigger=PropertyChanged}" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,15"/>
+        <TextBlock Grid.Row="7" Text="Reason:" Margin="0,0,0,5" Foreground="{StaticResource TextSecondaryBrush}"/>
+        <TextBox Grid.Row="8" Text="{Binding Reason, UpdateSourceTrigger=PropertyChanged}" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,0,15"/>
 
-        <TextBlock Grid.Row="9" Text="{Binding StatusMessage}" Foreground="Red" TextWrapping="Wrap" Margin="0,0,0,10"/>
+        <TextBlock Grid.Row="9" Text="{Binding StatusMessage}" Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap" Margin="0,0,0,10" FontSize="12"/>
 
-        <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Save" Width="100" Margin="0,0,10,0" Command="{Binding SaveCommand}"/>
-            <Button Content="Cancel" Width="100" Command="{Binding CancelCommand}"/>
-        </StackPanel>
+        <Border Grid.Row="10" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Save" Width="100" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,10,0"/>
+                <Button Content="Cancel" Width="100" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

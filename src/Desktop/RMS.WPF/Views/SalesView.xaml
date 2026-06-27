@@ -13,66 +13,59 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <DockPanel Margin="10">
-            <TextBlock Text="Sales"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       DockPanel.Dock="Left"/>
+        <!-- Header Card -->
+        <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left">
+                    <TextBlock Text="Sales" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="Create and manage transactions" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                </StackPanel>
 
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right">
-                <Button Content="Refresh"
-                        Command="{Binding RefreshCommand}"
-                        Margin="0,0,5,0"/>
-
-                <Button Content="New Sale"
-                        Command="{Binding NewSaleCommand}"/>
-            </StackPanel>
-        </DockPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right">
+                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+                    <Button Content="New Sale" Command="{Binding NewSaleCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
 
         <!-- Status -->
         <TextBlock Grid.Row="1"
                    Text="{Binding StatusMessage}"
-                   Margin="10,0,10,10"
-                   Foreground="Gray"/>
+                   Margin="0,0,0,12"
+                   Foreground="{StaticResource TextSecondaryBrush}"
+                   FontSize="12"/>
 
         <!-- Table -->
-        <DataGrid Grid.Row="2"
-                  ItemsSource="{Binding Sales}"
-                  SelectedItem="{Binding SelectedSale}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Sale Number" Binding="{Binding SaleNumber}" />
-                <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}" />
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
-                <DataGridTextColumn Header="SubTotal" Binding="{Binding SubTotal, StringFormat=C}" />
-                <DataGridTextColumn Header="Discount" Binding="{Binding DiscountAmount, StringFormat=C}" />
-                <DataGridTextColumn Header="Tax" Binding="{Binding TaxAmount, StringFormat=C}" />
-                <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=C}" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="0">
+            <DataGrid ItemsSource="{Binding Sales}"
+                      SelectedItem="{Binding SelectedSale}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      Style="{StaticResource ModernDataGridStyle}"
+                      BorderThickness="0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Sale Number" Binding="{Binding SaleNumber}" Width="140"/>
+                    <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="160"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                    <DataGridTextColumn Header="SubTotal" Binding="{Binding SubTotal, StringFormat=C}" Width="100"/>
+                    <DataGridTextColumn Header="Discount" Binding="{Binding DiscountAmount, StringFormat=C}" Width="100"/>
+                    <DataGridTextColumn Header="Tax" Binding="{Binding TaxAmount, StringFormat=C}" Width="100"/>
+                    <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=C}" Width="110"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
 
         <!-- Footer -->
-        <StackPanel Grid.Row="3"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Margin="10">
-            <Button Content="View History"
-                    Command="{Binding ViewHistoryCommand}"
-                    Margin="0,0,20,0"/>
+        <Border Grid.Row="3" Style="{StaticResource CardBorderStyle}" Margin="0,12,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="View History" Command="{Binding ViewHistoryCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,24,0"/>
 
-            <Button Content="Prev"
-                    Command="{Binding PreviousPageCommand}"
-                    Margin="0,0,5,0"/>
-
-            <TextBlock Text="{Binding PageNumber}" VerticalAlignment="Center"/>
-            <TextBlock Text="/" VerticalAlignment="Center"/>
-            <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center" Margin="5,0"/>
-
-            <Button Content="Next"
-                    Command="{Binding NextPageCommand}"/>
-        </StackPanel>
+                <Button Content="Prev" Command="{Binding PreviousPageCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+                <TextBlock Text="{Binding PageNumber}" VerticalAlignment="Center" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"/>
+                <TextBlock Text="/" VerticalAlignment="Center" FontSize="13" Margin="4,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center" FontSize="13" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <Button Content="Next" Command="{Binding NextPageCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

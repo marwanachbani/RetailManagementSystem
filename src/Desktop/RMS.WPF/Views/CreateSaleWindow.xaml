@@ -7,9 +7,10 @@
         Title="New Sale"
         Height="650"
         Width="800"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}">
 
-    <Grid Margin="20">
+    <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -19,70 +20,84 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="New Sale" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+        <!-- Header -->
+        <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <TextBlock Text="New Sale" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+        </Border>
 
-        <!-- Add Item -->
-        <Grid Grid.Row="1" Margin="0,0,0,15">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0"/>
-            <TextBox Grid.Column="1" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="60" Margin="0,0,10,0"/>
-            <TextBox Grid.Column="2" Text="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="0,0,10,0"/>
-            <Button Grid.Column="3" Content="Add" Width="60" Command="{Binding AddItemCommand}"/>
-        </Grid>
+        <!-- Add Item Card -->
+        <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0" ToolTip="Product name"/>
+                <TextBox Grid.Column="1" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="80" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0" ToolTip="Quantity"/>
+                <TextBox Grid.Column="2" Text="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}" Width="100" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0" ToolTip="Unit price"/>
+                <Button Grid.Column="3" Content="Add" Width="80" Command="{Binding AddItemCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
+            </Grid>
+        </Border>
 
-        <!-- Items -->
-        <DataGrid Grid.Row="2"
-                  ItemsSource="{Binding Items}"
-                  SelectedItem="{Binding SelectedItem}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Product" Binding="{Binding ProductName}" />
-                <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" />
-                <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, StringFormat=C}" />
-                <DataGridTextColumn Header="Total" Binding="{Binding TotalPrice, StringFormat=C}" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <!-- Items Table -->
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="0" Margin="0,0,0,12">
+            <DataGrid ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      Style="{StaticResource ModernDataGridStyle}"
+                      BorderThickness="0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Product" Binding="{Binding ProductName}" Width="*"/>
+                    <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="80"/>
+                    <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, StringFormat=C}" Width="100"/>
+                    <DataGridTextColumn Header="Total" Binding="{Binding TotalPrice, StringFormat=C}" Width="100"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
 
-        <!-- Totals -->
-        <Grid Grid.Row="3" Margin="0,10,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                <TextBlock Text="{Binding SubTotal, StringFormat='SubTotal: {0:C}'}" />
-                <TextBlock Text="{Binding DiscountAmount, StringFormat='Discount: {0:C}'}" />
-                <TextBlock Text="{Binding TaxAmount, StringFormat='Tax: {0:C}'}" />
-                <TextBlock Text="{Binding TotalAmount, StringFormat='Total: {0:C}'}" FontWeight="Bold" FontSize="16"/>
+        <!-- Totals Card -->
+        <Border Grid.Row="3" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding SubTotal, StringFormat='SubTotal: {0:C}'}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"/>
+                    <TextBlock Text="{Binding DiscountAmount, StringFormat='Discount: {0:C}'}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"/>
+                    <TextBlock Text="{Binding TaxAmount, StringFormat='Tax: {0:C}'}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"/>
+                    <TextBlock Text="{Binding TotalAmount, StringFormat='Total: {0:C}'}" FontWeight="Bold" FontSize="18" Foreground="{StaticResource PrimaryBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Discount / Tax Card -->
+        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Discount %:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Column="1" Text="{Binding DiscountPercentage, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,24,0"/>
+                <TextBlock Grid.Column="2" Text="Tax %:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Column="3" Text="{Binding TaxPercentage, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}"/>
+            </Grid>
+        </Border>
+
+        <!-- Actions Card -->
+        <Border Grid.Row="5" Style="{StaticResource CardBorderStyle}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource ErrorBrush}" Margin="0,0,20,0" VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" MaxWidth="300"/>
+                <Button Content="Remove Item" Command="{Binding RemoveItemCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="Complete Sale" Command="{Binding CompleteSaleCommand}" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="Cancel" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
             </StackPanel>
-        </Grid>
-
-        <!-- Discount / Tax -->
-        <Grid Grid.Row="4" Margin="0,0,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="100"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Discount %:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <TextBox Grid.Column="1" Text="{Binding DiscountPercentage, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,20,0"/>
-            <TextBlock Grid.Column="2" Text="Tax %:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <TextBox Grid.Column="3" Text="{Binding TaxPercentage, UpdateSourceTrigger=PropertyChanged}"/>
-        </Grid>
-
-        <!-- Actions -->
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
-            <TextBlock Text="{Binding StatusMessage}" Foreground="Red" Margin="0,0,20,0" VerticalAlignment="Center"/>
-            <Button Content="Remove Item" Command="{Binding RemoveItemCommand}" Margin="0,0,10,0"/>
-            <Button Content="Complete Sale" Command="{Binding CompleteSaleCommand}" Margin="0,0,10,0"/>
-            <Button Content="Cancel" Command="{Binding CancelCommand}"/>
-        </StackPanel>
+        </Border>
     </Grid>
 </Window>

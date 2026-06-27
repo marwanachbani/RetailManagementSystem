@@ -32,5 +32,13 @@ public partial class LoginWindow : Window
                 ? Visibility.Collapsed
                 : Visibility.Visible;
         }
+
+        if (e.PropertyName == nameof(LoginViewModel.ShowPassword) && DataContext is LoginViewModel vm2)
+        {
+            if (!vm2.ShowPassword)
+            {
+                PasswordBox.Password = vm2.Password;
+            }
+        }
     }
 }

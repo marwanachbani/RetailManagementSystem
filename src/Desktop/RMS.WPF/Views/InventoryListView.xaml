@@ -4,82 +4,152 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d">
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <DockPanel Margin="10">
-            <TextBlock Text="Inventory"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       DockPanel.Dock="Left"/>
+        <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Inventory" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="+ Stock Adjustment" Command="{Binding StockAdjustmentCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,12,0,0">
+                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             Width="200"
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Margin="0,0,8,0"/>
+                    <CheckBox IsChecked="{Binding ShowLowStockOnly}" Content="Low Stock Only" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right">
-                <TextBox Width="200"
-                         Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="1" Text="Loading..." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"
+                   Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                <Button Content="Search"
-                        Command="{Binding SearchCommand}"
-                        Margin="0,0,5,0"/>
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="0">
+            <Grid>
+                <DataGrid ItemsSource="{Binding InventoryItems}"
+                          IsReadOnly="True"
+                          AutoGenerateColumns="False"
+                          Style="{StaticResource ModernDataGridStyle}"
+                          Visibility="{Binding HasData, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          RowHeight="40">
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="StockOkColor" Color="#10B981"/>
+                        <SolidColorBrush x:Key="StockLowColor" Color="#F59E0B"/>
+                        <SolidColorBrush x:Key="StockOutColor" Color="#EF4444"/>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="8,0,0,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Quantity" Binding="{Binding CurrentQuantity}" Width="80">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding StockStatus}" Value="OutOfStock">
+                                            <Setter Property="Foreground" Value="{StaticResource StockOutColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding StockStatus}" Value="Low">
+                                            <Setter Property="Foreground" Value="{StaticResource StockLowColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding StockStatus}" Value="Ok">
+                                            <Setter Property="Foreground" Value="{StaticResource StockOkColor}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Threshold" Binding="{Binding LowStockThreshold}" Width="80">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTemplateColumn Header="Status" Width="90">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding StockStatus}" Value="OutOfStock">
+                                                        <Setter Property="Background" Value="#FEE2E2"/>
+                                                        <Setter Property="ToolTip" Value="Out of stock — order immediately"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding StockStatus}" Value="Low">
+                                                        <Setter Property="Background" Value="#FEF3C7"/>
+                                                        <Setter Property="ToolTip" Value="Low stock — reorder soon"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding StockStatus}" Value="Ok">
+                                                        <Setter Property="Background" Value="#D1FAE5"/>
+                                                        <Setter Property="ToolTip" Value="Stock level is healthy"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding StatusText}" FontSize="11" FontWeight="SemiBold">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding StockStatus}" Value="OutOfStock">
+                                                            <Setter Property="Foreground" Value="#991B1B"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding StockStatus}" Value="Low">
+                                                            <Setter Property="Foreground" Value="#92400E"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding StockStatus}" Value="Ok">
+                                                            <Setter Property="Foreground" Value="#065F46"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Actions" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Content="Edit" Command="{Binding DataContext.EditStockCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding Id}" Style="{StaticResource SecondaryButtonStyle}" Padding="8,2" FontSize="11" Margin="0,0,4,0"/>
+                                        <Button Content="History" Command="{Binding DataContext.ViewHistoryCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding Id}" Style="{StaticResource SecondaryButtonStyle}" Padding="8,2" FontSize="11"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
 
-                <Button Content="Refresh"
-                        Command="{Binding RefreshCommand}"
-                        Margin="0,0,5,0"/>
-            </StackPanel>
-        </DockPanel>
-
-        <!-- Status -->
-        <TextBlock Grid.Row="1"
-                   Text="{Binding StatusMessage}"
-                   Margin="10,0,10,10"
-                   Foreground="Gray"/>
-
-        <!-- Table -->
-        <DataGrid Grid.Row="2"
-                  ItemsSource="{Binding Items}"
-                  SelectedItem="{Binding SelectedItem}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Product ID" Binding="{Binding ProductId}" />
-                <DataGridTextColumn Header="Current Quantity" Binding="{Binding CurrentQuantity}" />
-                <DataGridTextColumn Header="Low Stock Threshold" Binding="{Binding LowStockThreshold}" />
-                <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}" />
-                <DataGridTextColumn Header="Last Updated" Binding="{Binding UpdatedAt, StringFormat={}{0:yyyy-MM-dd HH:mm}}" />
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <!-- Footer -->
-        <StackPanel Grid.Row="3"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Margin="10">
-            <Button Content="Adjust Stock"
-                    Command="{Binding AdjustStockCommand}"
-                    Margin="0,0,5,0"/>
-
-            <Button Content="View History"
-                    Command="{Binding ViewHistoryCommand}"
-                    Margin="0,0,20,0"/>
-
-            <Button Content="Prev"
-                    Command="{Binding PreviousPageCommand}"
-                    Margin="0,0,5,0"/>
-
-            <TextBlock Text="{Binding PageNumber}" VerticalAlignment="Center"/>
-            <TextBlock Text="/" VerticalAlignment="Center"/>
-            <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center" Margin="5,0"/>
-
-            <Button Content="Next"
-                    Command="{Binding NextPageCommand}"/>
-        </StackPanel>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                            Visibility="{Binding HasData, Converter={StaticResource InvertBooleanToVisibilityConverter}}">
+                    <TextBlock Text="No inventory items found." FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Add some products to see inventory data." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

@@ -5,9 +5,10 @@ namespace RMS.WPF.Views;
 
 public partial class SalesHistoryWindow : Window
 {
-    public SalesHistoryWindow()
+    public SalesHistoryWindow(SalesHistoryViewModel viewModel)
     {
         InitializeComponent();
+        DataContext = viewModel;
     }
 
     protected override void OnContentRendered(EventArgs e)

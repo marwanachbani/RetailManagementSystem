@@ -1,8 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Dapper;
 using MediatR;
+using RMS.BuildingBlocks.Contracts;
+using RMS.BuildingBlocks.Persistence;
+using Microsoft.Extensions.DependencyInjection;
 using RMS.Modules.Inventory.Application.Contracts;
-using RMS.Modules.Inventory.Application.GetInventoryPaged;
+using RMS.Modules.Inventory.Application.GetInventoryItem;
 using RMS.WPF.Commands;
 using RMS.WPF.Views;
 
@@ -11,139 +15,125 @@ namespace RMS.WPF.ViewModels;
 public sealed class InventoryListViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
-    private readonly IServiceProvider _services;
-    private string? _searchTerm;
-    private InventoryItemReadModel? _selectedItem;
-    private string? _statusMessage;
-    private int _pageNumber = 1;
-    private int _totalPages = 1;
+    private readonly IDbConnectionFactory _dbFactory;
+    private readonly IServiceProvider _serviceProvider;
+    private ObservableCollection<InventoryItemViewModel> _inventoryItems = new();
+    private string _searchText = string.Empty;
+    private bool _showLowStockOnly;
+    private bool _isLoading;
+    private bool _hasData;
 
-    public InventoryListViewModel(IMediator mediator, IServiceProvider services)
+    public InventoryListViewModel(IMediator mediator, IDbConnectionFactory dbFactory, IServiceProvider serviceProvider)
     {
         _mediator = mediator;
-        _services = services;
-        RefreshCommand = new RelayCommand(_ => _ = LoadAsync());
-        SearchCommand = new RelayCommand(_ => _ = SearchAsync());
-        AdjustStockCommand = new RelayCommand(_ => _ = OpenAdjustmentDialog(), _ => SelectedItem is not null);
-        ViewHistoryCommand = new RelayCommand(_ => _ = OpenHistoryDialog(), _ => SelectedItem is not null);
-        NextPageCommand = new RelayCommand(_ => _ = NextPageAsync(), _ => PageNumber < TotalPages);
-        PreviousPageCommand = new RelayCommand(_ => _ = PreviousPageAsync(), _ => PageNumber > 1);
-        _ = LoadAsync();
+        _dbFactory = dbFactory;
+        _serviceProvider = serviceProvider;
+        RefreshCommand = new RelayCommand(_ => _ = LoadInventoryAsync());
+        StockAdjustmentCommand = new RelayCommand(_ => _ = ShowStockAdjustmentAsync());
+        EditStockCommand = new RelayCommand(o => _ = ShowStockAdjustmentAsync((Guid)o!));
+        ViewHistoryCommand = new RelayCommand(o => _ = ShowHistoryAsync((Guid)o!));
+        _ = LoadInventoryAsync();
     }
 
-    public ObservableCollection<InventoryItemReadModel> Items { get; } = new();
-    public int PageSize { get; } = 25;
-
-    public string? SearchTerm
+    public ObservableCollection<InventoryItemViewModel> InventoryItems
     {
-        get => _searchTerm;
-        set
-        {
-            _searchTerm = value;
-            OnPropertyChanged();
-        }
+        get => _inventoryItems;
+        private set { _inventoryItems = value; OnPropertyChanged(); }
     }
 
-    public InventoryItemReadModel? SelectedItem
+    public string SearchText
     {
-        get => _selectedItem;
-        set
-        {
-            _selectedItem = value;
-            OnPropertyChanged();
-            CommandManager.InvalidateRequerySuggested();
-        }
+        get => _searchText;
+        set { _searchText = value; OnPropertyChanged(); }
     }
 
-    public string? StatusMessage
+    public bool ShowLowStockOnly
     {
-        get => _statusMessage;
-        private set
-        {
-            _statusMessage = value;
-            OnPropertyChanged();
-        }
+        get => _showLowStockOnly;
+        set { _showLowStockOnly = value; OnPropertyChanged(); _ = LoadInventoryAsync(); }
     }
 
-    public int PageNumber
+    public bool IsLoading
     {
-        get => _pageNumber;
-        private set
-        {
-            _pageNumber = value;
-            OnPropertyChanged();
-        }
+        get => _isLoading;
+        private set { _isLoading = value; OnPropertyChanged(); }
     }
 
-    public int TotalPages
+    public bool HasData
     {
-        get => _totalPages;
-        private set
-        {
-            _totalPages = value;
-            OnPropertyChanged();
-            CommandManager.InvalidateRequerySuggested();
-        }
+        get => _hasData;
+        private set { _hasData = value; OnPropertyChanged(); }
     }
 
     public ICommand RefreshCommand { get; }
-    public ICommand SearchCommand { get; }
-    public ICommand AdjustStockCommand { get; }
+    public ICommand StockAdjustmentCommand { get; }
+    public ICommand EditStockCommand { get; }
     public ICommand ViewHistoryCommand { get; }
-    public ICommand NextPageCommand { get; }
-    public ICommand PreviousPageCommand { get; }
 
-    public async Task LoadAsync()
+    public async Task LoadInventoryAsync()
     {
-        var result = await _mediator.Send(new GetInventoryPagedQuery(PageNumber, PageSize, SearchTerm, false));
-        if (result.IsFailure)
+        IsLoading = true;
+        try
         {
-            StatusMessage = result.Error;
-            return;
+            using var connection = _dbFactory.CreateConnection();
+            var sql = @"
+                SELECT i.Id, i.ProductId, i.CurrentQuantity, i.LowStockThreshold, i.IsActive, i.CreatedAt, i.UpdatedAt,
+                       p.Name as ProductName
+                FROM InventoryItems i
+                JOIN Products p ON i.ProductId = p.Id
+                WHERE 1=1
+            ";
+            if (ShowLowStockOnly)
+                sql += " AND i.CurrentQuantity <= i.LowStockThreshold";
+            if (!string.IsNullOrWhiteSpace(SearchText))
+                sql += " AND p.Name LIKE @search";
+            sql += " ORDER BY p.Name";
+
+            var items = await connection.QueryAsync<InventoryItemViewModel>(sql, new { search = "%" + SearchText + "%" });
+            InventoryItems = new ObservableCollection<InventoryItemViewModel>(items);
+            HasData = InventoryItems.Count > 0;
         }
-
-        Items.Clear();
-        foreach (var item in result.Value.Items)
-            Items.Add(item);
-
-        TotalPages = Math.Max(1, result.Value.TotalPages);
-        StatusMessage = $"{result.Value.TotalCount} inventory items";
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
-    private async Task SearchAsync()
+    private async Task ShowStockAdjustmentAsync(Guid? id = null)
     {
-        PageNumber = 1;
-        await LoadAsync();
+        var dialog = _serviceProvider.GetRequiredService<StockAdjustmentWindow>();
+        if (id.HasValue)
+        {
+            var result = await _mediator.Send(new GetInventoryItemQuery(id.Value));
+            if (result.IsSuccess && result.Value is not null)
+            {
+                dialog.LoadInventoryItem(result.Value);
+            }
+        }
+        if (dialog.ShowDialog() == true)
+        {
+            await LoadInventoryAsync();
+        }
     }
 
-    private async Task NextPageAsync()
+    private async Task ShowHistoryAsync(Guid id)
     {
-        PageNumber++;
-        await LoadAsync();
+        var dialog = _serviceProvider.GetRequiredService<InventoryHistoryWindow>();
+        dialog.LoadHistory(id);
+        dialog.ShowDialog();
     }
+}
 
-    private async Task PreviousPageAsync()
-    {
-        PageNumber--;
-        await LoadAsync();
-    }
-
-    private async Task OpenAdjustmentDialog()
-    {
-        if (SelectedItem is null) return;
-
-        var window = (StockAdjustmentWindow)_services.GetService(typeof(StockAdjustmentWindow))!;
-        window.LoadInventoryItem(SelectedItem);
-        if (window.ShowDialog() == true)
-            await LoadAsync();
-    }
-
-    private async Task OpenHistoryDialog()
-    {
-        if (SelectedItem is null) return;
-
-        var window = (InventoryHistoryWindow)_services.GetService(typeof(InventoryHistoryWindow))!;
-        window.LoadHistory(SelectedItem.Id);
-        window.ShowDialog();
-    }
+public class InventoryItemViewModel
+{
+    public Guid Id { get; set; }
+    public Guid ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public int CurrentQuantity { get; set; }
+    public int LowStockThreshold { get; set; }
+    public bool IsActive { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public string StockStatus => CurrentQuantity == 0 ? "OutOfStock" : CurrentQuantity <= LowStockThreshold ? "Low" : "Ok";
+    public string StatusText => CurrentQuantity == 0 ? "Out of Stock" : CurrentQuantity <= LowStockThreshold ? "Low" : "OK";
 }

@@ -8,10 +8,6 @@ using RMS.WPF.Commands;
 
 namespace RMS.WPF.ViewModels;
 
-/// <summary>
-/// ViewModel for the login screen. Follows MVVM: no WPF-specific logic,
-/// no direct UI manipulation — just commands, properties, and events.
-/// </summary>
 public sealed class LoginViewModel : INotifyPropertyChanged
 {
     private readonly IMediator _mediator;
@@ -19,6 +15,8 @@ public sealed class LoginViewModel : INotifyPropertyChanged
     private string _password = string.Empty;
     private string? _errorMessage;
     private bool _isLoading;
+    private bool _showPassword;
+    private bool _rememberMe;
 
     public LoginViewModel(IMediator mediator)
     {
@@ -37,9 +35,6 @@ public sealed class LoginViewModel : INotifyPropertyChanged
         }
     }
 
-    /// <summary>
-    /// Bound from the code-behind (PasswordBox does not support direct binding for security).
-    /// </summary>
     public string Password
     {
         get => _password;
@@ -48,6 +43,26 @@ public sealed class LoginViewModel : INotifyPropertyChanged
             _password = value;
             OnPropertyChanged();
             RaiseCanExecuteChanged();
+        }
+    }
+
+    public bool ShowPassword
+    {
+        get => _showPassword;
+        set
+        {
+            _showPassword = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool RememberMe
+    {
+        get => _rememberMe;
+        set
+        {
+            _rememberMe = value;
+            OnPropertyChanged();
         }
     }
 
@@ -74,10 +89,6 @@ public sealed class LoginViewModel : INotifyPropertyChanged
 
     public ICommand LoginCommand { get; }
 
-    /// <summary>
-    /// Raised when authentication succeeds. The App or Window subscribes
-    /// and transitions to the main shell.
-    /// </summary>
     public event EventHandler<AuthenticateUserResult>? LoginSucceeded;
 
     private async Task LoginAsync()
@@ -110,7 +121,6 @@ public sealed class LoginViewModel : INotifyPropertyChanged
 
     private void RaiseCanExecuteChanged()
     {
-        // Force re-evaluation of the LoginCommand's CanExecute.
         CommandManager.InvalidateRequerySuggested();
     }
 

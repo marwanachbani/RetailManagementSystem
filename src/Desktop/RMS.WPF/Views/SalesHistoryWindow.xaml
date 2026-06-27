@@ -7,9 +7,10 @@
         Title="Sales History"
         Height="500"
         Width="800"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}">
 
-    <Grid Margin="15">
+    <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -17,26 +18,33 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Sales History" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+        <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <TextBlock Text="Sales History" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+        </Border>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Date:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <DatePicker SelectedDate="{Binding SelectedDate}" Margin="0,0,10,0"/>
-            <Button Content="Refresh" Command="{Binding RefreshCommand}"/>
-        </StackPanel>
+        <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Date:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <DatePicker SelectedDate="{Binding SelectedDate}" Margin="0,0,12,0" Width="140"/>
+                <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
+            </StackPanel>
+        </Border>
 
-        <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" Foreground="Gray" Margin="0,0,0,10"/>
+        <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12" FontSize="12"/>
 
-        <DataGrid Grid.Row="3"
-                  ItemsSource="{Binding Sales}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Sale Number" Binding="{Binding SaleNumber}" />
-                <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}" />
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
-                <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=C}" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <Border Grid.Row="3" Style="{StaticResource CardBorderStyle}" Padding="0">
+            <DataGrid ItemsSource="{Binding Sales}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      Style="{StaticResource ModernDataGridStyle}"
+                      BorderThickness="0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Sale Number" Binding="{Binding SaleNumber}" Width="140"/>
+                    <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="160"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                    <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=C}" Width="120"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
     </Grid>
 </Window>
