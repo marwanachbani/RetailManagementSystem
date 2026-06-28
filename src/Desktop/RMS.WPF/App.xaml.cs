@@ -24,6 +24,8 @@ using RMS.Modules.Inventory.Application;
 using RMS.Modules.Inventory.Infrastructure;
 using RMS.Modules.Products.Application;
 using RMS.Modules.Products.Infrastructure;
+using RMS.Modules.Customers.Application;
+using RMS.Modules.Customers.Infrastructure;
 using RMS.Modules.Sales.Application;
 using RMS.Modules.Sales.Infrastructure;
 using RMS.Modules.Sales.Infrastructure.ReceiptGeneration;
@@ -183,6 +185,11 @@ public partial class App : Application
         services.AddSalesInfrastructure();
         services.AddSalesMigrations(ConnectionString);
 
+        // Customers module — fully wired vertical slice.
+        services.AddCustomersModule();
+        services.AddCustomersInfrastructure();
+        services.AddCustomersMigrations(ConnectionString);
+
         // WPF view models.
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainWindowViewModel>();
@@ -196,6 +203,9 @@ public partial class App : Application
         services.AddTransient<SalesHistoryViewModel>();
         services.AddTransient<StockAdjustmentViewModel>();
         services.AddTransient<InventoryHistoryViewModel>();
+        services.AddTransient<CustomerListViewModel>();
+        services.AddTransient<CreateCustomerViewModel>();
+        services.AddTransient<EditCustomerViewModel>();
 
         // WPF views.
         services.AddTransient<ProductListWindow>();
@@ -206,6 +216,8 @@ public partial class App : Application
         services.AddTransient<InventoryHistoryWindow>();
         services.AddTransient<CreateSaleWindow>();
         services.AddTransient<SalesHistoryWindow>();
+        services.AddTransient<CreateCustomerWindow>();
+        services.AddTransient<EditCustomerWindow>();
     }
 }
 
