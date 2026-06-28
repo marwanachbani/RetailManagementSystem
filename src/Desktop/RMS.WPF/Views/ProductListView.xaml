@@ -40,11 +40,11 @@
 
         <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="0">
             <Grid>
+                <!-- DataGrid is ALWAYS visible so WPF tracks collection changes correctly -->
                 <DataGrid ItemsSource="{Binding Products}"
                           IsReadOnly="True"
                           AutoGenerateColumns="False"
                           Style="{StaticResource ModernDataGridStyle}"
-                          Visibility="{Binding HasData, Converter={StaticResource BooleanToVisibilityConverter}}"
                           RowHeight="40">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Code" Binding="{Binding ProductCode}" Width="100" FontWeight="SemiBold"/>
@@ -63,11 +63,14 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                            Visibility="{Binding HasData, Converter={StaticResource InvertBooleanToVisibilityConverter}}">
-                    <TextBlock Text="No products found." FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Try adjusting your search or filter." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
-                </StackPanel>
+                <!-- Empty state overlays on top of the DataGrid when there is no data -->
+                <Border Background="{StaticResource SurfaceBrush}"
+                        Visibility="{Binding HasData, Converter={StaticResource InvertBooleanToVisibilityConverter}}">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="No products found." FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Try adjusting your search or filter." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Border>
     </Grid>

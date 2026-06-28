@@ -15,7 +15,8 @@ internal static class DevelopmentSeed
 {
     public static async Task SeedAsync(IServiceProvider services)
     {
-        using var connection = services.GetRequiredService<IDbConnectionFactory>().CreateConnection();
+        var factory = (IDbConnectionFactory)services.GetService(typeof(IDbConnectionFactory))!;
+        using var connection = factory.CreateConnection();
         var existing = await connection.ExecuteScalarAsync<int>("SELECT COUNT(1) FROM Products;");
         if (existing > 6)
         {

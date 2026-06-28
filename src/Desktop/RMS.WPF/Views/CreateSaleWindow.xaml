@@ -5,99 +5,169 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="New Sale"
-        Height="650"
-        Width="800"
+        Height="720"
+        Width="1100"
         WindowStartupLocation="CenterOwner"
         Background="{StaticResource BackgroundBrush}">
 
-    <Grid Margin="24">
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
         <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
-            <TextBlock Text="New Sale" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+            <TextBlock Text="New Sale — Select Products" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
         </Border>
 
-        <!-- Add Item Card -->
-        <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0" ToolTip="Product name"/>
-                <TextBox Grid.Column="1" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="80" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0" ToolTip="Quantity"/>
-                <TextBox Grid.Column="2" Text="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}" Width="100" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0" ToolTip="Unit price"/>
-                <Button Grid.Column="3" Content="Add" Width="80" Command="{Binding AddItemCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
-            </Grid>
-        </Border>
+        <!-- Main Content: Catalog + Cart -->
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Items Table -->
-        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="0" Margin="0,0,0,12">
-            <DataGrid ItemsSource="{Binding Items}"
-                      SelectedItem="{Binding SelectedItem}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      Style="{StaticResource ModernDataGridStyle}"
-                      BorderThickness="0">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Product" Binding="{Binding ProductName}" Width="*"/>
-                    <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="80"/>
-                    <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, StringFormat=C}" Width="100"/>
-                    <DataGridTextColumn Header="Total" Binding="{Binding TotalPrice, StringFormat=C}" Width="100"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
+            <!-- LEFT: Product Catalog -->
+            <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,8,0" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-        <!-- Totals Card -->
-        <Border Grid.Row="3" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                    <TextBlock Text="{Binding SubTotal, StringFormat='SubTotal: {0:C}'}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"/>
-                    <TextBlock Text="{Binding DiscountAmount, StringFormat='Discount: {0:C}'}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"/>
-                    <TextBlock Text="{Binding TaxAmount, StringFormat='Tax: {0:C}'}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"/>
-                    <TextBlock Text="{Binding TotalAmount, StringFormat='Total: {0:C}'}" FontWeight="Bold" FontSize="18" Foreground="{StaticResource PrimaryBrush}" Margin="0,4,0,0"/>
+                    <TextBlock Text="Product Catalog" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="16,12,16,8"/>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16,0,16,8">
+                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="240"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 Margin="0,0,8,0"/>
+                        <Button Content="Search" Command="{Binding SearchProductsCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="2" ItemsSource="{Binding Products}"
+                              IsReadOnly="True"
+                              AutoGenerateColumns="False"
+                              Style="{StaticResource ModernDataGridStyle}"
+                              BorderThickness="0"
+                              RowHeight="44">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Category" Binding="{Binding CategoryName}" Width="120"/>
+                            <DataGridTextColumn Header="Price" Binding="{Binding SalePrice, StringFormat={}{0:C2}}" Width="90"/>
+                            <DataGridTemplateColumn Header="Action" Width="70">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="+ Add"
+                                                Command="{Binding DataContext.AddToCartCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource PrimaryButtonStyle}"
+                                                Padding="6,2"
+                                                FontSize="11"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- RIGHT: Cart + Totals -->
+            <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="8,0,0,0" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Cart" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="16,12,16,8"/>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Items}"
+                              SelectedItem="{Binding SelectedCartItem}"
+                              IsReadOnly="True"
+                              AutoGenerateColumns="False"
+                              Style="{StaticResource ModernDataGridStyle}"
+                              BorderThickness="0"
+                              RowHeight="40">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Product" Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="50">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Unit" Binding="{Binding UnitPrice, StringFormat={}{0:C2}}" Width="70"/>
+                            <DataGridTextColumn Header="Total" Binding="{Binding TotalPrice, StringFormat={}{0:C2}}" Width="70"/>
+                            <DataGridTemplateColumn Header="" Width="50">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="×"
+                                                Command="{Binding DataContext.RemoveFromCartCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource DangerButtonStyle}"
+                                                Padding="4,2"
+                                                FontSize="11"
+                                                Width="28"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Totals -->
+                    <StackPanel Grid.Row="2" Margin="16,12,16,16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Discount %:" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding DiscountPercentage, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Width="80"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" HorizontalAlignment="Right">
+                                <TextBlock Text="{Binding SubTotal, StringFormat='SubTotal: {0:C2}'}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"/>
+                                <TextBlock Text="{Binding DiscountAmount, StringFormat='Discount: {0:C2}'}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"/>
+                                <TextBlock Text="{Binding TaxAmount, StringFormat='Tax: {0:C2}'}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"/>
+                                <TextBlock Text="{Binding TotalAmount, StringFormat='Total: {0:C2}'}" FontWeight="Bold" FontSize="20" Foreground="{StaticResource PrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Bottom Actions -->
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}">
+            <DockPanel LastChildFill="False">
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="{StaticResource ErrorBrush}"
+                           DockPanel.Dock="Left"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           MaxWidth="400"
+                           FontSize="12"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button Content="Cancel"
+                            Width="100"
+                            Command="{Binding CancelCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Margin="0,0,8,0"/>
+                    <Button Content="Complete Sale"
+                            Width="120"
+                            Command="{Binding CompleteSaleCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}"/>
                 </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- Discount / Tax Card -->
-        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="100"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Discount %:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
-                <TextBox Grid.Column="1" Text="{Binding DiscountPercentage, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,24,0"/>
-                <TextBlock Grid.Column="2" Text="Tax %:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
-                <TextBox Grid.Column="3" Text="{Binding TaxPercentage, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}"/>
-            </Grid>
-        </Border>
-
-        <!-- Actions Card -->
-        <Border Grid.Row="5" Style="{StaticResource CardBorderStyle}">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource ErrorBrush}" Margin="0,0,20,0" VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" MaxWidth="300"/>
-                <Button Content="Remove Item" Command="{Binding RemoveItemCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
-                <Button Content="Complete Sale" Command="{Binding CompleteSaleCommand}" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
-                <Button Content="Cancel" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
-            </StackPanel>
+            </DockPanel>
         </Border>
     </Grid>
 </Window>

@@ -102,7 +102,7 @@ public partial class App : Application
         base.OnExit(e);
     }
 
-    private void ShowLoginWindow()
+    public void ShowLoginWindow()
     {
         var loginWindow = new LoginWindow();
         var loginViewModel = _host!.Services.GetRequiredService<LoginViewModel>();

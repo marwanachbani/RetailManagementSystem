@@ -10,21 +10,25 @@ public sealed class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel(
         DashboardViewModel dashboardViewModel,
         ProductListViewModel productListViewModel,
-        InventoryListViewModel inventoryListViewModel)
+        InventoryListViewModel inventoryListViewModel,
+        SalesViewModel salesViewModel)
     {
         DashboardViewModel = dashboardViewModel;
         ProductListViewModel = productListViewModel;
         InventoryListViewModel = inventoryListViewModel;
+        SalesViewModel = salesViewModel;
         NavigateDashboardCommand = new RelayCommand(_ => CurrentViewModel = DashboardViewModel);
         NavigateProductsCommand = new RelayCommand(_ => CurrentViewModel = ProductListViewModel);
         NavigateInventoryCommand = new RelayCommand(_ => CurrentViewModel = InventoryListViewModel);
-        LogoutCommand = new RelayCommand(_ => _ = LogoutAsync());
+        NavigateSalesCommand = new RelayCommand(_ => CurrentViewModel = SalesViewModel);
+        LogoutCommand = new RelayCommand(_ => Logout());
         CurrentViewModel = DashboardViewModel;
     }
 
     public DashboardViewModel DashboardViewModel { get; }
     public ProductListViewModel ProductListViewModel { get; }
     public InventoryListViewModel InventoryListViewModel { get; }
+    public SalesViewModel SalesViewModel { get; }
 
     public object? CurrentViewModel
     {
@@ -39,13 +43,13 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ICommand NavigateDashboardCommand { get; }
     public ICommand NavigateProductsCommand { get; }
     public ICommand NavigateInventoryCommand { get; }
+    public ICommand NavigateSalesCommand { get; }
     public ICommand LogoutCommand { get; }
 
-    private Task LogoutAsync()
+    public event EventHandler? RequestLogout;
+
+    private void Logout()
     {
-        // In a real app, this would show a confirmation dialog and restart to login
-        // For now, just navigate back to dashboard as a safe default
-        CurrentViewModel = DashboardViewModel;
-        return Task.CompletedTask;
+        RequestLogout?.Invoke(this, EventArgs.Empty);
     }
 }

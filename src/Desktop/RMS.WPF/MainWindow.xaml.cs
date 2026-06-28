@@ -9,5 +9,10 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
+        viewModel.RequestLogout += (_, _) =>
+        {
+            Close();
+            ((App)Application.Current).ShowLoginWindow();
+        };
     }
 }

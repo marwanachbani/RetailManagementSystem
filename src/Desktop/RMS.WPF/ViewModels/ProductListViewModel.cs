@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using RMS.Modules.Products.Application.Contracts;
 using RMS.Modules.Products.Application.GetProductsPaged;
 using RMS.WPF.Commands;
@@ -13,7 +12,6 @@ public sealed class ProductListViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
     private readonly IServiceProvider _serviceProvider;
-    private ObservableCollection<ProductReadModel> _products = new();
     private string _searchText = string.Empty;
     private bool _showInactive;
     private bool _isLoading;
@@ -30,11 +28,7 @@ public sealed class ProductListViewModel : ViewModelBase
         _ = LoadProductsAsync();
     }
 
-    public ObservableCollection<ProductReadModel> Products
-    {
-        get => _products;
-        private set { _products = value; OnPropertyChanged(); }
-    }
+    public ObservableCollection<ProductReadModel> Products { get; } = new();
 
     public string SearchText
     {
@@ -76,8 +70,19 @@ public sealed class ProductListViewModel : ViewModelBase
                 SearchTerm: string.IsNullOrWhiteSpace(SearchText) ? null : SearchText.Trim(),
                 IncludeInactive: ShowInactive);
             var result = await _mediator.Send(query);
-            Products = new ObservableCollection<ProductReadModel>(result.Value.Items);
+            Products.Clear();
+            if (result.IsSuccess)
+            {
+                foreach (var item in result.Value.Items)
+                    Products.Add(item);
+            }
             HasData = Products.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Error loading products");
+            Products.Clear();
+            HasData = false;
         }
         finally
         {
@@ -94,7 +99,7 @@ public sealed class ProductListViewModel : ViewModelBase
 
     private async Task CreateProductAsync()
     {
-        var dialog = _serviceProvider.GetRequiredService<CreateProductWindow>();
+        var dialog = (CreateProductWindow)_serviceProvider.GetService(typeof(CreateProductWindow))!;
         if (dialog.ShowDialog() == true)
         {
             await LoadProductsAsync();
@@ -103,7 +108,7 @@ public sealed class ProductListViewModel : ViewModelBase
 
     private async Task EditProductAsync(Guid id)
     {
-        var dialog = _serviceProvider.GetRequiredService<EditProductWindow>();
+        var dialog = (EditProductWindow)_serviceProvider.GetService(typeof(EditProductWindow))!;
         dialog.LoadProduct(id);
         if (dialog.ShowDialog() == true)
         {

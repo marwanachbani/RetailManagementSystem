@@ -22,7 +22,7 @@ public partial class CreateSaleWindow : Window
                 DialogResult = vm.DialogResult;
                 Close();
             };
-            _ = vm.InitializeSaleAsync(Guid.NewGuid()); // In real app, use current user
+            _ = vm.InitializeSaleAsync(Guid.NewGuid());
         }
     }
 }

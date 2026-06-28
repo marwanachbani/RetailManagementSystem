@@ -4,7 +4,6 @@ using Dapper;
 using MediatR;
 using RMS.BuildingBlocks.Contracts;
 using RMS.BuildingBlocks.Persistence;
-using Microsoft.Extensions.DependencyInjection;
 using RMS.Modules.Inventory.Application.Contracts;
 using RMS.Modules.Inventory.Application.GetInventoryItem;
 using RMS.WPF.Commands;
@@ -90,8 +89,16 @@ public sealed class InventoryListViewModel : ViewModelBase
             sql += " ORDER BY p.Name";
 
             var items = await connection.QueryAsync<InventoryItemViewModel>(sql, new { search = "%" + SearchText + "%" });
-            InventoryItems = new ObservableCollection<InventoryItemViewModel>(items);
+            InventoryItems.Clear();
+            foreach (var item in items)
+                InventoryItems.Add(item);
             HasData = InventoryItems.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Error loading inventory");
+            InventoryItems.Clear();
+            HasData = false;
         }
         finally
         {
@@ -101,7 +108,7 @@ public sealed class InventoryListViewModel : ViewModelBase
 
     private async Task ShowStockAdjustmentAsync(Guid? id = null)
     {
-        var dialog = _serviceProvider.GetRequiredService<StockAdjustmentWindow>();
+        var dialog = (StockAdjustmentWindow)_serviceProvider.GetService(typeof(StockAdjustmentWindow))!;
         if (id.HasValue)
         {
             var result = await _mediator.Send(new GetInventoryItemQuery(id.Value));
@@ -118,7 +125,7 @@ public sealed class InventoryListViewModel : ViewModelBase
 
     private async Task ShowHistoryAsync(Guid id)
     {
-        var dialog = _serviceProvider.GetRequiredService<InventoryHistoryWindow>();
+        var dialog = (InventoryHistoryWindow)_serviceProvider.GetService(typeof(InventoryHistoryWindow))!;
         dialog.LoadHistory(id);
         dialog.ShowDialog();
     }

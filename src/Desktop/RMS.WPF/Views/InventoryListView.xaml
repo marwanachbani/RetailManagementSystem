@@ -43,7 +43,6 @@
                           IsReadOnly="True"
                           AutoGenerateColumns="False"
                           Style="{StaticResource ModernDataGridStyle}"
-                          Visibility="{Binding HasData, Converter={StaticResource BooleanToVisibilityConverter}}"
                           RowHeight="40">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="StockOkColor" Color="#10B981"/>
@@ -144,11 +143,13 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                            Visibility="{Binding HasData, Converter={StaticResource InvertBooleanToVisibilityConverter}}">
-                    <TextBlock Text="No inventory items found." FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Add some products to see inventory data." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
-                </StackPanel>
+                <Border Background="{StaticResource SurfaceBrush}"
+                        Visibility="{Binding HasData, Converter={StaticResource InvertBooleanToVisibilityConverter}}">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="No inventory items found." FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Add some products to see inventory data." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Border>
     </Grid>
