@@ -70,7 +70,7 @@ public class CustomerReadStoreTests : CustomerIntegrationTestBase, IClassFixture
     {
         for (int i = 0; i < 5; i++)
         {
-            var customer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: $"Searchable{i}", phone: $"+1555000000{i:00}");
+            var customer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: $"Searchable{i}", phone: $"+1555000000{i:00}", email: $"search{i}@example.com");
             await WriteStore.InsertAsync(customer);
         }
 
@@ -84,7 +84,7 @@ public class CustomerReadStoreTests : CustomerIntegrationTestBase, IClassFixture
     {
         for (int i = 0; i < 7; i++)
         {
-            var customer = CreateSampleCustomer(id: Guid.NewGuid(), phone: $"+1555000000{i:00}");
+            var customer = CreateSampleCustomer(id: Guid.NewGuid(), phone: $"+1555000000{i:00}", email: $"paged{i}@example.com");
             await WriteStore.InsertAsync(customer);
         }
 
@@ -99,10 +99,10 @@ public class CustomerReadStoreTests : CustomerIntegrationTestBase, IClassFixture
     [Fact]
     public async Task GetPagedAsync_ExcludingInactive_Should_FilterOutInactive()
     {
-        var activeCustomer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: "Active");
+        var activeCustomer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: "Active", email: "active@example.com", phone: "+15551111111");
         await WriteStore.InsertAsync(activeCustomer);
 
-        var inactiveCustomer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: "Inactive");
+        var inactiveCustomer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: "Inactive", email: "inactive@example.com", phone: "+15552222222");
         await WriteStore.InsertAsync(inactiveCustomer);
         inactiveCustomer.Deactivate();
         await WriteStore.UpdateAsync(inactiveCustomer);

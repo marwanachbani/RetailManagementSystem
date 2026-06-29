@@ -41,7 +41,7 @@ public class CustomerTests
         var act = () => Customer.Create(Guid.NewGuid(), "", "Doe", PhoneNumber.Create("+1234567890"));
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Customer.FirstNameEmpty");
+            .Where(e => e.RuleName == "Customer.FirstNameEmpty");
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class CustomerTests
         var act = () => Customer.Create(Guid.NewGuid(), "John", "", PhoneNumber.Create("+1234567890"));
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Customer.LastNameEmpty");
+            .Where(e => e.RuleName == "Customer.LastNameEmpty");
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class CustomerTests
         var act = () => Customer.Create(Guid.NewGuid(), new string('A', 101), "Doe", PhoneNumber.Create("+1234567890"));
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Customer.FirstNameTooLong");
+            .Where(e => e.RuleName == "Customer.FirstNameTooLong");
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class CustomerTests
         var act = () => customer.Deactivate();
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Customer.AlreadyInactive");
+            .Where(e => e.RuleName == "Customer.AlreadyInactive");
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class CustomerTests
         var act = () => customer.Reactivate();
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Customer.AlreadyActive");
+            .Where(e => e.RuleName == "Customer.AlreadyActive");
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class CustomerTests
         var act = () => customer.EnsureActiveForNewSale();
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Customer.InactiveForSale");
+            .Where(e => e.RuleName == "Customer.InactiveForSale");
     }
 
     [Fact]

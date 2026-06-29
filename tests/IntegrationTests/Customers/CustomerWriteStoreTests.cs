@@ -1,6 +1,7 @@
 using FluentAssertions;
 using RMS.BuildingBlocks.Contracts;
 using RMS.Modules.Customers.Domain.Entities;
+using RMS.Modules.Customers.Domain.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -98,9 +99,6 @@ public class CustomerWriteStoreTests : CustomerIntegrationTestBase, IClassFixtur
         var inactive = await ReadStore.GetByIdAsync(customer.Id);
         inactive!.Status.Should().Be("Inactive");
 
-        inactive.Status.Should().Be("Inactive");
-        customer.Reactivate();
-        customer.ClearDomainEvents();
         customer.Reactivate();
         await WriteStore.UpdateAsync(customer);
 

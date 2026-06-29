@@ -42,7 +42,7 @@ public class CustomerCommandHandlerTests : CustomerIntegrationTestBase, IClassFi
         var result = await _mediator.Send(command);
 
         result.IsFailure.Should().BeTrue();
-        result.ErrorCode.Should().Be("Customers.DuplicatePhoneNumber");
+        result.ErrorCode.Should().Be("Customers.PhoneNumberAlreadyExists");
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class CustomerCommandHandlerTests : CustomerIntegrationTestBase, IClassFi
         var result = await _mediator.Send(command);
 
         result.IsFailure.Should().BeTrue();
-        result.ErrorCode.Should().Be("Customers.DuplicateEmail");
+        result.ErrorCode.Should().Be("Customers.EmailAlreadyExists");
     }
 
     [Fact]
@@ -103,6 +103,7 @@ public class CustomerCommandHandlerTests : CustomerIntegrationTestBase, IClassFi
     public async Task DeactivateCustomer_AlreadyInactive_Should_Fail()
     {
         var customer = CreateSampleCustomer();
+        await WriteStore.InsertAsync(customer);
         customer.Deactivate();
         await WriteStore.UpdateAsync(customer);
 
@@ -117,6 +118,7 @@ public class CustomerCommandHandlerTests : CustomerIntegrationTestBase, IClassFi
     public async Task ReactivateCustomer_Should_ReactivateCustomer()
     {
         var customer = CreateSampleCustomer();
+        await WriteStore.InsertAsync(customer);
         customer.Deactivate();
         await WriteStore.UpdateAsync(customer);
 
@@ -171,7 +173,7 @@ public class CustomerCommandHandlerTests : CustomerIntegrationTestBase, IClassFi
     {
         for (int i = 0; i < 10; i++)
         {
-            var customer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: $"User{i}", phone: $"+1555000000{i:00}");
+            var customer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: $"User{i}", phone: $"+1555000000{i:00}", email: $"user{i}@example.com");
             await WriteStore.InsertAsync(customer);
         }
 
@@ -188,7 +190,7 @@ public class CustomerCommandHandlerTests : CustomerIntegrationTestBase, IClassFi
     {
         for (int i = 0; i < 5; i++)
         {
-            var customer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: $"Unique{i}", lastName: "Smith", phone: $"+1555000000{i:00}");
+            var customer = CreateSampleCustomer(id: Guid.NewGuid(), firstName: $"Unique{i}", lastName: "Smith", phone: $"+1555000000{i:00}", email: $"unique{i}@example.com");
             await WriteStore.InsertAsync(customer);
         }
 

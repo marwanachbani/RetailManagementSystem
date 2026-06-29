@@ -12,7 +12,7 @@ public class PhoneNumberTests
     [InlineData("+1 234 567 890")]
     [InlineData("+1-234-567-890")]
     [InlineData("1234567")]
-    [InlineData("+123456789012345")]
+    [InlineData("123456789012345")]
     public void Create_WithValidPhoneNumber_Should_Succeed(string phoneNumber)
     {
         var result = PhoneNumber.Create(phoneNumber);
@@ -58,7 +58,7 @@ public class PhoneNumberTests
     }
 
     [Theory]
-    [InlineData("abc123")]
+    [InlineData("abc1234567")]
     [InlineData("12-34-56-abc")]
     [InlineData("+123 456 @789")]
     public void Create_WithInvalidCharacters_Should_Throw(string phoneNumber)

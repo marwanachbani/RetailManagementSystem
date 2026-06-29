@@ -17,7 +17,7 @@ public sealed class CustomerReadStore : ICustomerReadStore
     {
         using var connection = _connectionFactory.CreateConnection();
         const string sql = """
-            SELECT Id, CustomerCode, FirstName, LastName, PhoneNumber, Email,
+            SELECT Id, CustomerCode, FirstName, LastName, FirstName || ' ' || LastName AS FullName, PhoneNumber, Email,
                    Street, City, PostalCode, Country,
                    CASE Status WHEN 0 THEN 'Active' WHEN 1 THEN 'Inactive' END AS Status,
                    CreatedAt, UpdatedAt
@@ -30,7 +30,7 @@ public sealed class CustomerReadStore : ICustomerReadStore
     {
         using var connection = _connectionFactory.CreateConnection();
         const string sql = """
-            SELECT Id, CustomerCode, FirstName, LastName, PhoneNumber, Email,
+            SELECT Id, CustomerCode, FirstName, LastName, FirstName || ' ' || LastName AS FullName, PhoneNumber, Email,
                    Street, City, PostalCode, Country,
                    CASE Status WHEN 0 THEN 'Active' WHEN 1 THEN 'Inactive' END AS Status,
                    CreatedAt, UpdatedAt
@@ -44,7 +44,7 @@ public sealed class CustomerReadStore : ICustomerReadStore
     {
         using var connection = _connectionFactory.CreateConnection();
         const string sql = """
-            SELECT Id, CustomerCode, FirstName, LastName, PhoneNumber, Email,
+            SELECT Id, CustomerCode, FirstName, LastName, FirstName || ' ' || LastName AS FullName, PhoneNumber, Email,
                    Street, City, PostalCode, Country,
                    CASE Status WHEN 0 THEN 'Active' WHEN 1 THEN 'Inactive' END AS Status,
                    CreatedAt, UpdatedAt
@@ -57,7 +57,7 @@ public sealed class CustomerReadStore : ICustomerReadStore
     {
         using var connection = _connectionFactory.CreateConnection();
         const string sql = """
-            SELECT Id, CustomerCode, FirstName, LastName, PhoneNumber, Email,
+            SELECT Id, CustomerCode, FirstName, LastName, FirstName || ' ' || LastName AS FullName, PhoneNumber, Email,
                    Street, City, PostalCode, Country,
                    CASE Status WHEN 0 THEN 'Active' WHEN 1 THEN 'Inactive' END AS Status,
                    CreatedAt, UpdatedAt
@@ -78,7 +78,7 @@ public sealed class CustomerReadStore : ICustomerReadStore
         };
 
         const string sql = """
-            SELECT Id, CustomerCode, FirstName, LastName, PhoneNumber, Email,
+            SELECT Id, CustomerCode, FirstName, LastName, FirstName || ' ' || LastName AS FullName, PhoneNumber, Email,
                    Street, City, PostalCode, Country,
                    CASE Status WHEN 0 THEN 'Active' WHEN 1 THEN 'Inactive' END AS Status,
                    CreatedAt, UpdatedAt
@@ -124,7 +124,7 @@ public sealed class CustomerReadStore : ICustomerReadStore
             """;
 
         var items = await connection.QueryAsync<CustomerReadModel>(
-            $"SELECT Id, CustomerCode, FirstName, LastName, PhoneNumber, Email, Street, City, PostalCode, Country, CASE Status WHEN 0 THEN 'Active' WHEN 1 THEN 'Inactive' END AS Status, CreatedAt, UpdatedAt FROM Customers {whereClause} ORDER BY LastName, FirstName LIMIT @PageSize OFFSET @Offset;",
+            $"SELECT Id, CustomerCode, FirstName, LastName, FirstName || ' ' || LastName AS FullName, PhoneNumber, Email, Street, City, PostalCode, Country, CASE Status WHEN 0 THEN 'Active' WHEN 1 THEN 'Inactive' END AS Status, CreatedAt, UpdatedAt FROM Customers {whereClause} ORDER BY LastName, FirstName LIMIT @PageSize OFFSET @Offset;",
             parameters);
 
         var total = await connection.ExecuteScalarAsync<int>(

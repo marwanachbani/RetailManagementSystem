@@ -24,18 +24,6 @@ public sealed class CreateCustomersTableMigration : Migration
                 .WithColumn("CreatedAt").AsDateTime().NotNullable()
                 .WithColumn("UpdatedAt").AsDateTime().Nullable();
 
-            Create.Index("IX_Customers_CustomerCode")
-                .OnTable("Customers")
-                .OnColumn("CustomerCode").Ascending();
-
-            Create.Index("IX_Customers_PhoneNumber")
-                .OnTable("Customers")
-                .OnColumn("PhoneNumber").Ascending();
-
-            Create.Index("IX_Customers_Email")
-                .OnTable("Customers")
-                .OnColumn("Email").Ascending();
-
             Create.Index("IX_Customers_LastName")
                 .OnTable("Customers")
                 .OnColumn("LastName").Ascending();

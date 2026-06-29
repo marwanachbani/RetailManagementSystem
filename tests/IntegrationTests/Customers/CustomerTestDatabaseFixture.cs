@@ -10,6 +10,7 @@ using RMS.BuildingBlocks.Persistence;
 using RMS.Modules.Customers.Application;
 using RMS.Modules.Customers.Application.Contracts;
 using RMS.Modules.Customers.Domain.Entities;
+using RMS.Modules.Customers.Domain.ValueObjects;
 using RMS.Modules.Customers.Infrastructure;
 using RMS.Modules.Customers.Infrastructure.Migrations;
 using RMS.Modules.Identity.Infrastructure;

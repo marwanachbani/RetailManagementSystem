@@ -26,7 +26,7 @@ public class EmailTests
         var act = () => Email.Create("");
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Email.Empty");
+            .Where(e => e.RuleName == "Email.Empty");
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class EmailTests
         var act = () => Email.Create(null!);
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Email.Empty");
+            .Where(e => e.RuleName == "Email.Empty");
     }
 
     [Theory]
@@ -49,7 +49,7 @@ public class EmailTests
         var act = () => Email.Create(email);
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Email.InvalidFormat");
+            .Where(e => e.RuleName == "Email.InvalidFormat");
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class EmailTests
         var act = () => Email.Create(email);
 
         act.Should().Throw<BusinessRuleValidationException>()
-            .Where(e => e.ErrorCode == "Email.TooLong");
+            .Where(e => e.RuleName == "Email.TooLong");
     }
 
     [Fact]
