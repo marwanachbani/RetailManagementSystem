@@ -13,9 +13,11 @@ public sealed class ProductListViewModel : ViewModelBase
     private readonly IMediator _mediator;
     private readonly IServiceProvider _serviceProvider;
     private string _searchText = string.Empty;
+    private string? _statusMessage;
     private bool _showInactive;
     private bool _isLoading;
     private bool _hasData;
+    private ProductReadModel? _selectedProduct;
 
     public ProductListViewModel(IMediator mediator, IServiceProvider serviceProvider)
     {
@@ -34,6 +36,24 @@ public sealed class ProductListViewModel : ViewModelBase
     {
         get => _searchText;
         set { _searchText = value; OnPropertyChanged(); }
+    }
+
+    public string SearchTerm
+    {
+        get => SearchText;
+        set => SearchText = value;
+    }
+
+    public ProductReadModel? SelectedProduct
+    {
+        get => _selectedProduct;
+        set { _selectedProduct = value; OnPropertyChanged(); }
+    }
+
+    public string? StatusMessage
+    {
+        get => _statusMessage;
+        private set { _statusMessage = value; OnPropertyChanged(); }
     }
 
     public bool ShowInactive
@@ -55,8 +75,10 @@ public sealed class ProductListViewModel : ViewModelBase
     }
 
     public ICommand SearchCommand { get; }
+    public ICommand RefreshCommand => SearchCommand;
     public ICommand ClearFilterCommand { get; }
     public ICommand CreateProductCommand { get; }
+    public ICommand AddCommand => CreateProductCommand;
     public ICommand EditProductCommand { get; }
 
     public async Task LoadProductsAsync()
@@ -66,7 +88,7 @@ public sealed class ProductListViewModel : ViewModelBase
         {
             var query = new GetProductsPagedQuery(
                 PageNumber: 1,
-                PageSize: 500,
+                PageSize: 100,
                 SearchTerm: string.IsNullOrWhiteSpace(SearchText) ? null : SearchText.Trim(),
                 IncludeInactive: ShowInactive);
             var result = await _mediator.Send(query);
@@ -75,6 +97,13 @@ public sealed class ProductListViewModel : ViewModelBase
             {
                 foreach (var item in result.Value.Items)
                     Products.Add(item);
+                StatusMessage = result.Value.Items.Count > 0
+                    ? $"Loaded {result.Value.Items.Count} products."
+                    : "No products found.";
+            }
+            else
+            {
+                StatusMessage = result.Error;
             }
             HasData = Products.Count > 0;
         }
