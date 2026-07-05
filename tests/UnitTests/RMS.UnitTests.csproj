@@ -22,6 +22,8 @@
     <ProjectReference Include="..\..\src\Modules\Inventory\Domain\RMS.Modules.Inventory.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Sales\Domain\RMS.Modules.Sales.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Customers\Domain\RMS.Modules.Customers.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Purchasing\Domain\RMS.Modules.Purchasing.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Suppliers\Domain\RMS.Modules.Suppliers.Domain.csproj" />
   </ItemGroup>
 
 </Project>

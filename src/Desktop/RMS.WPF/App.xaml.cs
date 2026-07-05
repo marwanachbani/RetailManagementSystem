@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Threading;
 using Dapper;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Processors;
@@ -29,6 +30,10 @@ using RMS.Modules.Customers.Infrastructure;
 using RMS.Modules.Sales.Application;
 using RMS.Modules.Sales.Infrastructure;
 using RMS.Modules.Sales.Infrastructure.ReceiptGeneration;
+using RMS.Modules.Purchasing.Application;
+using RMS.Modules.Purchasing.Infrastructure;
+using RMS.Modules.Suppliers.Application;
+using RMS.Modules.Suppliers.Infrastructure;
 using RMS.WPF.ViewModels;
 using RMS.WPF.ReceiptGeneration;
 using RMS.WPF.Views;
@@ -70,30 +75,78 @@ public partial class App : Application
         SqlMapper.RemoveTypeMap(typeof(Guid?));
     }
 
+    public App()
+    {
+        AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        DispatcherUnhandledException += OnDispatcherUnhandledException;
+        TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+    }
+
     protected override void OnStartup(StartupEventArgs e)
     {
-        EnsureProgramDataFolders();
-
-        _host = Host.CreateDefaultBuilder()
-            .ConfigureServices(ConfigureServices)
-            .Build();
-
-        _host.Start();
-        
-        // Apply database migrations before any business logic runs.
-        using (var scope = _host.Services.CreateScope())
+        try
         {
-            var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-            runner.MigrateUp();
+            EnsureProgramDataFolders();
 
-            SeedAdminAccountAsync(scope.ServiceProvider).GetAwaiter().GetResult();
-            DevelopmentSeed.SeedAsync(scope.ServiceProvider).GetAwaiter().GetResult();
+            _host = Host.CreateDefaultBuilder()
+                .ConfigureServices(ConfigureServices)
+                .Build();
+
+            _host.Start();
+
+            // Apply database migrations before any business logic runs.
+            using (var scope = _host.Services.CreateScope())
+            {
+                var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+                runner.MigrateUp();
+
+                SeedAdminAccountAsync(scope.ServiceProvider).GetAwaiter().GetResult();
+                DevelopmentSeed.SeedAsync(scope.ServiceProvider).GetAwaiter().GetResult();
+            }
+
+            Log.Information("RMS application starting up. Database: {DbPath}", DatabasePath);
+
+            ShowLoginWindow();
+            base.OnStartup(e);
         }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Fatal error during application startup");
+            MessageBox.Show(
+                $"Fatal error during startup:\n\n{ex.GetType().Name}: {ex.Message}\n\n{ex.StackTrace}",
+                "RMS - Startup Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            Shutdown(1);
+        }
+    }
 
-        Log.Information("RMS application starting up. Database: {DbPath}", DatabasePath);
+    private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        var ex = e.ExceptionObject as Exception;
+        Log.Fatal(ex, "Unhandled AppDomain exception");
+        MessageBox.Show(
+            $"Unhandled AppDomain exception:\n\n{ex?.GetType().Name}: {ex?.Message}\n\n{ex?.StackTrace}",
+            "RMS - Fatal Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+    }
 
-        ShowLoginWindow();
-        base.OnStartup(e);
+    private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    {
+        Log.Fatal(e.Exception, "Unhandled dispatcher exception");
+        MessageBox.Show(
+            $"Unhandled UI exception:\n\n{e.Exception.GetType().Name}: {e.Exception.Message}\n\n{e.Exception.StackTrace}",
+            "RMS - Fatal Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+        e.Handled = true;
+    }
+
+    private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        Log.Fatal(e.Exception, "Unobserved task exception");
+        e.SetObserved();
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -190,6 +243,16 @@ public partial class App : Application
         services.AddCustomersInfrastructure();
         services.AddCustomersMigrations(ConnectionString);
 
+        // Purchasing module — fully wired vertical slice.
+        services.AddPurchasingModule();
+        services.AddPurchasingInfrastructure();
+        services.AddPurchasingMigrations(ConnectionString);
+
+        // Suppliers module — fully wired vertical slice.
+        services.AddSuppliersModule();
+        services.AddSuppliersInfrastructure();
+        services.AddSuppliersMigrations(ConnectionString);
+
         // WPF view models.
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainWindowViewModel>();
@@ -207,6 +270,16 @@ public partial class App : Application
         services.AddTransient<CreateCustomerViewModel>();
         services.AddTransient<EditCustomerViewModel>();
 
+        services.AddTransient<SupplierListViewModel>();
+        services.AddTransient<CreateSupplierViewModel>();
+        services.AddTransient<EditSupplierViewModel>();
+
+        services.AddTransient<PurchaseOrdersViewModel>();
+        services.AddTransient<CreatePurchaseOrderViewModel>();
+        services.AddTransient<EditPurchaseOrderViewModel>();
+        services.AddTransient<ReceiveGoodsViewModel>();
+        services.AddTransient<PurchaseHistoryViewModel>();
+
         // WPF views.
         services.AddTransient<ProductListWindow>();
         services.AddTransient<CreateProductWindow>();
@@ -218,6 +291,15 @@ public partial class App : Application
         services.AddTransient<SalesHistoryWindow>();
         services.AddTransient<CreateCustomerWindow>();
         services.AddTransient<EditCustomerWindow>();
+
+        services.AddTransient<SupplierListView>();
+        services.AddTransient<CreateSupplierWindow>();
+        services.AddTransient<EditSupplierWindow>();
+
+        services.AddTransient<CreatePurchaseOrderWindow>();
+        services.AddTransient<EditPurchaseOrderWindow>();
+        services.AddTransient<ReceiveGoodsWindow>();
+        services.AddTransient<PurchaseHistoryWindow>();
     }
 }
 

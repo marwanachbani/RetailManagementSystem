@@ -8,7 +8,7 @@ namespace RMS.ArchitectureTests;
 public class ModuleIsolationTests
 {
     private static readonly string[] ModuleNames =
-        { "Sales", "Inventory", "Products", "Customers", "Suppliers", "Identity", "Reporting" };
+        { "Sales", "Inventory", "Products", "Customers", "Suppliers", "Identity", "Reporting", "Purchasing" };
 
     public static IEnumerable<object[]> ModulePairs()
     {

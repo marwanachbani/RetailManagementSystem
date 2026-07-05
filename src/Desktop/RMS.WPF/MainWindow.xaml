@@ -27,6 +27,12 @@
             <DataTemplate DataType="{x:Type viewModels:CustomerListViewModel}">
                 <views:CustomerListView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:SupplierListViewModel}">
+                <views:SupplierListView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:PurchaseOrdersViewModel}">
+                <views:PurchaseOrdersView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:SalesViewModel}">
                 <views:SalesView />
             </DataTemplate>
@@ -72,6 +78,14 @@
                             Margin="0,0,0,4"/>
                     <Button Content="Customers" 
                             Command="{Binding NavigateCustomersCommand}"
+                            Style="{StaticResource SidebarButtonStyle}"
+                            Margin="0,0,0,4"/>
+                    <Button Content="Suppliers" 
+                            Command="{Binding NavigateSuppliersCommand}"
+                            Style="{StaticResource SidebarButtonStyle}"
+                            Margin="0,0,0,4"/>
+                    <Button Content="Purchasing" 
+                            Command="{Binding NavigatePurchasingCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
                     <Button Content="Logout" 

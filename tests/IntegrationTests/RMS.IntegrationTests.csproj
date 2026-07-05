@@ -32,6 +32,12 @@
     <ProjectReference Include="..\..\src\Modules\Customers\Application\RMS.Modules.Customers.Application.csproj" />
     <ProjectReference Include="..\..\src\Modules\Customers\Domain\RMS.Modules.Customers.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Customers\Infrastructure\RMS.Modules.Customers.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Purchasing\Application\RMS.Modules.Purchasing.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Purchasing\Domain\RMS.Modules.Purchasing.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Purchasing\Infrastructure\RMS.Modules.Purchasing.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Suppliers\Application\RMS.Modules.Suppliers.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Suppliers\Domain\RMS.Modules.Suppliers.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Suppliers\Infrastructure\RMS.Modules.Suppliers.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

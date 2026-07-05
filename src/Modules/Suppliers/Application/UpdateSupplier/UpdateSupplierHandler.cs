@@ -1,4 +1,5 @@
 using MediatR;
+using RMS.BuildingBlocks.Domain;
 using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Suppliers.Application.Contracts;
@@ -53,4 +54,4 @@ public sealed class UpdateSupplierHandler : IRequestHandler<UpdateSupplierComman
     }
 }
 
-public sealed record SupplierUpdatedIntegrationEvent(Guid SupplierId, string SupplierCode, string CompanyName, string PhoneNumber) : RMS.BuildingBlocks.EventBus.IntegrationEvent;
+public sealed record SupplierUpdatedIntegrationEvent(Guid SupplierId, string SupplierCode, string CompanyName, string PhoneNumber) : DomainEvent, IIntegrationEvent;

@@ -1,4 +1,5 @@
 using MediatR;
+using RMS.BuildingBlocks.Domain;
 using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Suppliers.Application.Contracts;
@@ -45,4 +46,4 @@ public sealed class DeactivateSupplierHandler : IRequestHandler<DeactivateSuppli
     }
 }
 
-public sealed record SupplierDeactivatedIntegrationEvent(Guid SupplierId, string SupplierCode) : RMS.BuildingBlocks.EventBus.IntegrationEvent;
+public sealed record SupplierDeactivatedIntegrationEvent(Guid SupplierId, string SupplierCode) : DomainEvent, IIntegrationEvent;

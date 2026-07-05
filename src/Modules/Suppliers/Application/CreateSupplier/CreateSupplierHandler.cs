@@ -1,4 +1,5 @@
 using MediatR;
+using RMS.BuildingBlocks.Domain;
 using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Suppliers.Application.Contracts;
@@ -45,4 +46,4 @@ public sealed record SupplierCreatedIntegrationEvent(
     string SupplierCode,
     string CompanyName,
     string PhoneNumber,
-    string? Email) : RMS.BuildingBlocks.EventBus.IntegrationEvent;
+    string? Email) : DomainEvent, IIntegrationEvent;
