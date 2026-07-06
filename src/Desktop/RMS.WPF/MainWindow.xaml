@@ -42,73 +42,106 @@
             <ColumnDefinition Width="240" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
         <!-- Sidebar -->
-        <Border Background="{StaticResource SidebarBrush}" Padding="0,16">
+        <Border Grid.RowSpan="2" Background="{StaticResource SidebarBrush}" Padding="0,16">
             <DockPanel>
-                <!-- Logo -->
                 <StackPanel DockPanel.Dock="Top" Margin="20,0,20,24">
-                    <TextBlock Text="Retail Management" 
-                               Foreground="White" 
-                               FontSize="18" 
+                    <TextBlock Text="Retail Management"
+                               Foreground="White"
+                               FontSize="18"
                                FontWeight="Bold"/>
-                    <TextBlock Text="Enterprise Desktop ERP" 
-                               Foreground="#9CA3AF" 
-                               FontSize="11" 
+                    <TextBlock Text="Enterprise Desktop ERP"
+                               Foreground="#9CA3AF"
+                               FontSize="11"
                                Margin="0,4,0,0"/>
                 </StackPanel>
 
-                <!-- Navigation -->
                 <StackPanel DockPanel.Dock="Top" Margin="12,0">
-                    <Button Content="Dashboard" 
+                    <Button Content="Dashboard"
                             Command="{Binding NavigateDashboardCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
-                    <Button Content="Products" 
+                    <Button Content="Products"
                             Command="{Binding NavigateProductsCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
-                    <Button Content="Inventory" 
+                    <Button Content="Inventory"
                             Command="{Binding NavigateInventoryCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
-                    <Button Content="Sales" 
+                    <Button Content="Sales"
                             Command="{Binding NavigateSalesCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
-                    <Button Content="Customers" 
+                    <Button Content="Customers"
                             Command="{Binding NavigateCustomersCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
-                    <Button Content="Suppliers" 
+                    <Button Content="Suppliers"
                             Command="{Binding NavigateSuppliersCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
-                    <Button Content="Purchasing" 
+                    <Button Content="Purchasing"
                             Command="{Binding NavigatePurchasingCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
-                    <Button Content="Logout" 
+                    <Button Content="Logout"
                             Command="{Binding LogoutCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
                 </StackPanel>
 
-                <!-- Footer -->
                 <StackPanel DockPanel.Dock="Bottom" Margin="20,0,20,8">
-                    <TextBlock Text="v1.0.0" 
-                               Foreground="#6B7280" 
+                    <TextBlock Text="v1.0.0"
+                               Foreground="#6B7280"
                                FontSize="10"
                                HorizontalAlignment="Left"/>
                 </StackPanel>
             </DockPanel>
         </Border>
 
-        <!-- Content Area -->
-        <Border Grid.Column="1" 
-                Background="{StaticResource BackgroundBrush}"
-                Padding="20">
-            <ContentControl Content="{Binding CurrentViewModel}"/>
+        <Grid Grid.Column="1" Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Background="{StaticResource SurfaceBrush}" Padding="20,16" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="{Binding CurrentViewTitle}" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{Binding CurrentBreadcrumb}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding CurrentUserName}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0"/>
+                        <Border Background="{StaticResource PrimaryLightBrush}" CornerRadius="999" Padding="8,4">
+                            <TextBlock Text="Online" FontSize="11" Foreground="{StaticResource PrimaryDarkBrush}"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1"
+                    Background="{StaticResource BackgroundBrush}"
+                    Padding="20">
+                <ContentControl Content="{Binding CurrentViewModel}"/>
+            </Border>
+        </Grid>
+
+        <Border Grid.Column="1" Grid.Row="1" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="20,10">
+            <DockPanel>
+                <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
+                <TextBlock Text="Ready for fast checkout and order processing" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            </DockPanel>
         </Border>
     </Grid>
 </Window>

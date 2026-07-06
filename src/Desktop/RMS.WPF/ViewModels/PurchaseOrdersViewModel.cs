@@ -13,23 +13,26 @@ public sealed class PurchaseOrdersViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
     private readonly IServiceProvider _services;
+    private readonly PurchaseHistoryViewModel _historyViewModel;
     private string? _statusMessage;
     private PurchaseOrderReadModel? _selectedOrder;
     private int _pageNumber = 1;
     private int _totalPages = 1;
     private string _searchText = string.Empty;
     private int? _selectedStatusFilter;
+    private bool _isHistoryExpanded;
 
-    public PurchaseOrdersViewModel(IMediator mediator, IServiceProvider services)
+    public PurchaseOrdersViewModel(IMediator mediator, IServiceProvider services, PurchaseHistoryViewModel historyViewModel)
     {
         _mediator = mediator;
         _services = services;
+        _historyViewModel = historyViewModel;
         RefreshCommand = new RelayCommand(_ => _ = LoadAsync());
         NewPurchaseOrderCommand = new RelayCommand(_ => _ = OpenCreateDialog());
         EditPurchaseOrderCommand = new RelayCommand(_ => _ = OpenEditDialog(), _ => SelectedOrder is not null);
         ReceiveGoodsCommand = new RelayCommand(_ => _ = OpenReceiveGoodsDialog(), _ => CanReceiveGoods());
         CancelPurchaseOrderCommand = new RelayCommand(_ => _ = CancelOrderAsync(), _ => CanCancel());
-        ViewHistoryCommand = new RelayCommand(_ => _ = OpenHistoryDialog());
+        ViewHistoryCommand = new RelayCommand(_ => _ = ToggleHistoryAsync());
         PrintCommand = new RelayCommand(_ => _ = PrintOrder(), _ => SelectedOrder is not null);
         NextPageCommand = new RelayCommand(_ => _ = NextPageAsync(), _ => PageNumber < TotalPages);
         PreviousPageCommand = new RelayCommand(_ => _ = PreviousPageAsync(), _ => PageNumber > 1);
@@ -41,6 +44,7 @@ public sealed class PurchaseOrdersViewModel : ViewModelBase
     public ObservableCollection<string> StatusFilters { get; } = new() { "All", "Draft", "Submitted", "PartiallyReceived", "Completed", "Cancelled" };
 
     public int PageSize { get; } = 25;
+    public PurchaseHistoryViewModel HistoryViewModel => _historyViewModel;
 
     public PurchaseOrderReadModel? SelectedOrder
     {
@@ -81,6 +85,16 @@ public sealed class PurchaseOrdersViewModel : ViewModelBase
             _totalPages = value;
             OnPropertyChanged();
             CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public bool IsHistoryExpanded
+    {
+        get => _isHistoryExpanded;
+        set
+        {
+            _isHistoryExpanded = value;
+            OnPropertyChanged();
         }
     }
 
@@ -173,11 +187,11 @@ public sealed class PurchaseOrdersViewModel : ViewModelBase
             await LoadAsync();
     }
 
-    private async Task OpenHistoryDialog()
+    private async Task ToggleHistoryAsync()
     {
-        var window = (PurchaseHistoryWindow)_services.GetService(typeof(PurchaseHistoryWindow))!;
-        if (window.ShowDialog() == true)
-            await LoadAsync();
+        IsHistoryExpanded = !IsHistoryExpanded;
+        if (IsHistoryExpanded)
+            await HistoryViewModel.LoadAsync();
     }
 
     private async Task CancelOrderAsync()

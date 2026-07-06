@@ -27,6 +27,7 @@ public sealed class SupplierListViewModel : ViewModelBase
     {
         _mediator = mediator;
         _services = services;
+        SearchCommand = new RelayCommand(_ => _ = LoadAsync());
         RefreshCommand = new RelayCommand(_ => _ = LoadAsync());
         NewSupplierCommand = new RelayCommand(_ => _ = OpenCreateSupplierDialog());
         EditSupplierCommand = new RelayCommand(_ => _ = OpenEditSupplierDialog(), _ => SelectedSupplier is not null);
@@ -112,6 +113,7 @@ public sealed class SupplierListViewModel : ViewModelBase
         }
     }
 
+    public ICommand SearchCommand { get; }
     public ICommand RefreshCommand { get; }
     public ICommand NewSupplierCommand { get; }
     public ICommand EditSupplierCommand { get; }

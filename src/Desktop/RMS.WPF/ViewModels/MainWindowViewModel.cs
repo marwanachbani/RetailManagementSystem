@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Input;
 using RMS.WPF.Commands;
 
@@ -6,6 +7,10 @@ namespace RMS.WPF.ViewModels;
 public sealed class MainWindowViewModel : ViewModelBase
 {
     private object? _currentViewModel;
+    private string _currentViewTitle = "Dashboard";
+    private string _currentBreadcrumb = "Home / Dashboard";
+    private string _currentUserName = "Operator";
+    private string _statusMessage = "Ready";
 
     public MainWindowViewModel(
         DashboardViewModel dashboardViewModel,
@@ -23,15 +28,15 @@ public sealed class MainWindowViewModel : ViewModelBase
         CustomerListViewModel = customerListViewModel;
         SupplierListViewModel = supplierListViewModel;
         PurchaseOrdersViewModel = purchaseOrdersViewModel;
-        NavigateDashboardCommand = new RelayCommand(_ => CurrentViewModel = DashboardViewModel);
-        NavigateProductsCommand = new RelayCommand(_ => CurrentViewModel = ProductListViewModel);
-        NavigateInventoryCommand = new RelayCommand(_ => CurrentViewModel = InventoryListViewModel);
-        NavigateSalesCommand = new RelayCommand(_ => CurrentViewModel = SalesViewModel);
-        NavigateCustomersCommand = new RelayCommand(_ => CurrentViewModel = CustomerListViewModel);
-        NavigateSuppliersCommand = new RelayCommand(_ => CurrentViewModel = SupplierListViewModel);
-        NavigatePurchasingCommand = new RelayCommand(_ => CurrentViewModel = PurchaseOrdersViewModel);
+        NavigateDashboardCommand = new RelayCommand(_ => ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard"));
+        NavigateProductsCommand = new RelayCommand(_ => ShowView(ProductListViewModel, "Products", "Home / Products"));
+        NavigateInventoryCommand = new RelayCommand(_ => ShowView(InventoryListViewModel, "Inventory", "Home / Inventory"));
+        NavigateSalesCommand = new RelayCommand(_ => ShowView(SalesViewModel, "Sales", "Home / Sales"));
+        NavigateCustomersCommand = new RelayCommand(_ => ShowView(CustomerListViewModel, "Customers", "Home / Customers"));
+        NavigateSuppliersCommand = new RelayCommand(_ => ShowView(SupplierListViewModel, "Suppliers", "Home / Suppliers"));
+        NavigatePurchasingCommand = new RelayCommand(_ => ShowView(PurchaseOrdersViewModel, "Purchasing", "Home / Purchasing"));
         LogoutCommand = new RelayCommand(_ => Logout());
-        CurrentViewModel = DashboardViewModel;
+        ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard");
     }
 
     public DashboardViewModel DashboardViewModel { get; }
@@ -52,6 +57,46 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public string CurrentViewTitle
+    {
+        get => _currentViewTitle;
+        private set
+        {
+            _currentViewTitle = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string CurrentBreadcrumb
+    {
+        get => _currentBreadcrumb;
+        private set
+        {
+            _currentBreadcrumb = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string CurrentUserName
+    {
+        get => _currentUserName;
+        set
+        {
+            _currentUserName = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string StatusMessage
+    {
+        get => _statusMessage;
+        private set
+        {
+            _statusMessage = value;
+            OnPropertyChanged();
+        }
+    }
+
     public ICommand NavigateDashboardCommand { get; }
     public ICommand NavigateProductsCommand { get; }
     public ICommand NavigateInventoryCommand { get; }
@@ -63,8 +108,19 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     public event EventHandler? RequestLogout;
 
+    private void ShowView(object viewModel, string title, string breadcrumb)
+    {
+        CurrentViewModel = viewModel;
+        CurrentViewTitle = title;
+        CurrentBreadcrumb = breadcrumb;
+        StatusMessage = $"{title} ready";
+    }
+
     private void Logout()
     {
+        var result = MessageBox.Show("Do you want to log out and return to the sign-in screen?", "Log out", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (result != MessageBoxResult.Yes) return;
+
         RequestLogout?.Invoke(this, EventArgs.Empty);
     }
 }

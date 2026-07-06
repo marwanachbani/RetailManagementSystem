@@ -10,6 +10,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
@@ -45,6 +46,7 @@
             <Grid>
                 <!-- DataGrid is ALWAYS visible so WPF tracks collection changes correctly -->
                 <DataGrid ItemsSource="{Binding Products}"
+                          SelectedItem="{Binding SelectedProduct}"
                           IsReadOnly="True"
                           AutoGenerateColumns="False"
                           Style="{StaticResource ModernDataGridStyle}"
@@ -75,6 +77,21 @@
                     </StackPanel>
                 </Border>
             </Grid>
+        </Border>
+
+        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Margin="0,12,0,0">
+            <StackPanel>
+                <TextBlock Text="Selected Product" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                <TextBlock Text="{Binding SelectedProduct.Name, FallbackValue='Select a product to view details.'}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <TextBlock Text="Code: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding SelectedProduct.ProductCode}" Foreground="{StaticResource TextSecondaryBrush}" Margin="4,0,16,0"/>
+                    <TextBlock Text="Category: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding SelectedProduct.CategoryName}" Foreground="{StaticResource TextSecondaryBrush}" Margin="4,0,16,0"/>
+                    <TextBlock Text="Sale Price: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding SelectedProduct.SalePrice, StringFormat={}{0:C2}}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </StackPanel>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

@@ -41,4 +41,13 @@ public partial class LoginWindow : Window
             }
         }
     }
+
+    private void OnUsernameOrPasswordKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key != System.Windows.Input.Key.Enter || DataContext is not LoginViewModel vm)
+            return;
+
+        if (vm.LoginCommand.CanExecute(null))
+            vm.LoginCommand.Execute(null);
+    }
 }

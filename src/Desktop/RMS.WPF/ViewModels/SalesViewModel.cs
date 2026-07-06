@@ -13,18 +13,21 @@ public sealed class SalesViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
     private readonly IServiceProvider _services;
+    private readonly SalesHistoryViewModel _historyViewModel;
     private string? _statusMessage;
     private SaleReadModel? _selectedSale;
     private int _pageNumber = 1;
     private int _totalPages = 1;
+    private bool _isHistoryExpanded;
 
-    public SalesViewModel(IMediator mediator, IServiceProvider services)
+    public SalesViewModel(IMediator mediator, IServiceProvider services, SalesHistoryViewModel historyViewModel)
     {
         _mediator = mediator;
         _services = services;
+        _historyViewModel = historyViewModel;
         RefreshCommand = new RelayCommand(_ => _ = LoadAsync());
         NewSaleCommand = new RelayCommand(_ => _ = OpenCreateSaleDialog());
-        ViewHistoryCommand = new RelayCommand(_ => _ = OpenHistoryDialog());
+        ViewHistoryCommand = new RelayCommand(_ => _ = ToggleHistoryAsync());
         NextPageCommand = new RelayCommand(_ => _ = NextPageAsync(), _ => PageNumber < TotalPages);
         PreviousPageCommand = new RelayCommand(_ => _ = PreviousPageAsync(), _ => PageNumber > 1);
         _ = LoadAsync();
@@ -32,6 +35,7 @@ public sealed class SalesViewModel : ViewModelBase
 
     public ObservableCollection<SaleReadModel> Sales { get; } = new();
     public int PageSize { get; } = 25;
+    public SalesHistoryViewModel HistoryViewModel => _historyViewModel;
 
     public SaleReadModel? SelectedSale
     {
@@ -72,6 +76,16 @@ public sealed class SalesViewModel : ViewModelBase
             _totalPages = value;
             OnPropertyChanged();
             CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public bool IsHistoryExpanded
+    {
+        get => _isHistoryExpanded;
+        set
+        {
+            _isHistoryExpanded = value;
+            OnPropertyChanged();
         }
     }
 
@@ -117,10 +131,10 @@ public sealed class SalesViewModel : ViewModelBase
             await LoadAsync();
     }
 
-    private async Task OpenHistoryDialog()
+    private async Task ToggleHistoryAsync()
     {
-        var window = (SalesHistoryWindow)_services.GetService(typeof(SalesHistoryWindow))!;
-        if (window.ShowDialog() == true)
-            await LoadAsync();
+        IsHistoryExpanded = !IsHistoryExpanded;
+        if (IsHistoryExpanded)
+            await HistoryViewModel.LoadAsync();
     }
 }

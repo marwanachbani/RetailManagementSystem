@@ -43,7 +43,8 @@
                 <TextBox x:Name="UserNameTextBox"
                          Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource ModernTextBoxStyle}"
-                         Margin="0,0,0,12"/>
+                         Margin="0,0,0,12"
+                         KeyDown="OnUsernameOrPasswordKeyDown"/>
 
                 <TextBlock Text="Password"
                            FontSize="12"
@@ -52,10 +53,12 @@
                 <Grid Margin="0,0,0,12">
                     <PasswordBox x:Name="PasswordBox"
                                  Style="{StaticResource ModernPasswordBoxStyle}"
-                                 Visibility="{Binding ShowPassword, Converter={StaticResource InvertBooleanToVisibilityConverter}}"/>
+                                 Visibility="{Binding ShowPassword, Converter={StaticResource InvertBooleanToVisibilityConverter}}"
+                                 KeyDown="OnUsernameOrPasswordKeyDown"/>
                     <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource ModernTextBoxStyle}"
-                             Visibility="{Binding ShowPassword, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                             Visibility="{Binding ShowPassword, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             KeyDown="OnUsernameOrPasswordKeyDown"/>
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">

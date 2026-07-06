@@ -26,10 +26,6 @@ public sealed class CreatePurchasingTablesMigration : Migration
                 .WithColumn("Notes").AsString(500).Nullable()
                 .WithColumn("SupplierInvoiceNumber").AsString(100).Nullable();
 
-            Create.Index("IX_PurchaseOrders_PurchaseNumber")
-                .OnTable("PurchaseOrders")
-                .OnColumn("PurchaseNumber").Ascending();
-
             Create.Index("IX_PurchaseOrders_SupplierId")
                 .OnTable("PurchaseOrders")
                 .OnColumn("SupplierId").Ascending();

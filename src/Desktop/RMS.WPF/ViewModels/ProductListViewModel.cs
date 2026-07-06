@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using MediatR;
 using RMS.Modules.Products.Application.Contracts;
+using RMS.Modules.Products.Application.DeactivateProduct;
 using RMS.Modules.Products.Application.GetProductsPaged;
 using RMS.WPF.Commands;
 using RMS.WPF.Views;
@@ -9,26 +11,35 @@ using RMS.WPF.Views;
 namespace RMS.WPF.ViewModels;
 
 public sealed class ProductListViewModel : ViewModelBase
-{
-    private readonly IMediator _mediator;
-    private readonly IServiceProvider _serviceProvider;
-    private string _searchText = string.Empty;
-    private string? _statusMessage;
-    private bool _showInactive;
-    private bool _isLoading;
-    private bool _hasData;
-    private ProductReadModel? _selectedProduct;
-
-    public ProductListViewModel(IMediator mediator, IServiceProvider serviceProvider)
     {
-        _mediator = mediator;
-        _serviceProvider = serviceProvider;
-        SearchCommand = new RelayCommand(_ => _ = LoadProductsAsync());
-        ClearFilterCommand = new RelayCommand(_ => ClearFilter());
-        CreateProductCommand = new RelayCommand(_ => _ = CreateProductAsync());
-        EditProductCommand = new RelayCommand(o => _ = EditProductAsync((Guid)o!));
-        _ = LoadProductsAsync();
-    }
+        private readonly IMediator _mediator;
+        private readonly IServiceProvider _serviceProvider;
+        private string _searchText = string.Empty;
+        private string? _statusMessage;
+        private bool _showInactive;
+        private bool _isLoading;
+        private bool _hasData;
+        private ProductReadModel? _selectedProduct;
+        private int _pageNumber = 1;
+        private int _totalPages = 1;
+        public int PageSize { get; } = 25;
+
+        public ProductListViewModel(IMediator mediator, IServiceProvider serviceProvider)
+        {
+            _mediator = mediator;
+            _serviceProvider = serviceProvider;
+            SearchCommand = new RelayCommand(_ => _ = LoadProductsAsync());
+            RefreshCommand = new RelayCommand(_ => _ = LoadProductsAsync());
+            ClearFilterCommand = new RelayCommand(_ => ClearFilter());
+            CreateProductCommand = new RelayCommand(_ => _ = CreateProductAsync());
+            AddCommand = new RelayCommand(_ => _ = CreateProductAsync());
+            EditProductCommand = new RelayCommand(o => _ = EditProductAsync((Guid)o!), _ => SelectedProduct is not null);
+            EditCommand = new RelayCommand(_ => _ = EditProductFromSelection(), _ => SelectedProduct is not null);
+            DeactivateCommand = new RelayCommand(_ => _ = DeactivateProductAsync(), _ => SelectedProduct?.IsActive == true);
+            PreviousPageCommand = new RelayCommand(_ => _ = PreviousPageAsync(), _ => PageNumber > 1);
+            NextPageCommand = new RelayCommand(_ => _ = NextPageAsync(), _ => PageNumber < TotalPages);
+            _ = LoadProductsAsync();
+        }
 
     public ObservableCollection<ProductReadModel> Products { get; } = new();
 
@@ -47,7 +58,7 @@ public sealed class ProductListViewModel : ViewModelBase
     public ProductReadModel? SelectedProduct
     {
         get => _selectedProduct;
-        set { _selectedProduct = value; OnPropertyChanged(); }
+        set { _selectedProduct = value; OnPropertyChanged(); CommandManager.InvalidateRequerySuggested(); }
     }
 
     public string? StatusMessage
@@ -74,12 +85,28 @@ public sealed class ProductListViewModel : ViewModelBase
         private set { _hasData = value; OnPropertyChanged(); }
     }
 
+    public int PageNumber
+    {
+        get => _pageNumber;
+        private set { _pageNumber = value; OnPropertyChanged(); }
+    }
+
+    public int TotalPages
+    {
+        get => _totalPages;
+        private set { _totalPages = value; OnPropertyChanged(); }
+    }
+
     public ICommand SearchCommand { get; }
-    public ICommand RefreshCommand => SearchCommand;
+    public ICommand RefreshCommand { get; }
     public ICommand ClearFilterCommand { get; }
     public ICommand CreateProductCommand { get; }
-    public ICommand AddCommand => CreateProductCommand;
+    public ICommand AddCommand { get; }
     public ICommand EditProductCommand { get; }
+    public ICommand EditCommand { get; }
+    public ICommand DeactivateCommand { get; }
+    public ICommand PreviousPageCommand { get; }
+    public ICommand NextPageCommand { get; }
 
     public async Task LoadProductsAsync()
     {
@@ -87,8 +114,8 @@ public sealed class ProductListViewModel : ViewModelBase
         try
         {
             var query = new GetProductsPagedQuery(
-                PageNumber: 1,
-                PageSize: 100,
+                PageNumber: PageNumber,
+                PageSize: PageSize,
                 SearchTerm: string.IsNullOrWhiteSpace(SearchText) ? null : SearchText.Trim(),
                 IncludeInactive: ShowInactive);
             var result = await _mediator.Send(query);
@@ -97,9 +124,8 @@ public sealed class ProductListViewModel : ViewModelBase
             {
                 foreach (var item in result.Value.Items)
                     Products.Add(item);
-                StatusMessage = result.Value.Items.Count > 0
-                    ? $"Loaded {result.Value.Items.Count} products."
-                    : "No products found.";
+                TotalPages = Math.Max(1, result.Value.TotalPages);
+                StatusMessage = $"{result.Value.TotalCount} products";
             }
             else
             {
@@ -116,6 +142,7 @@ public sealed class ProductListViewModel : ViewModelBase
         finally
         {
             IsLoading = false;
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 
@@ -123,6 +150,7 @@ public sealed class ProductListViewModel : ViewModelBase
     {
         SearchText = string.Empty;
         ShowInactive = false;
+        PageNumber = 1;
         _ = LoadProductsAsync();
     }
 
@@ -141,6 +169,53 @@ public sealed class ProductListViewModel : ViewModelBase
         dialog.LoadProduct(id);
         if (dialog.ShowDialog() == true)
         {
+            await LoadProductsAsync();
+        }
+    }
+
+    private async Task EditProductFromSelection()
+    {
+        if (SelectedProduct is not null)
+            await EditProductAsync(SelectedProduct.Id);
+    }
+
+    private async Task DeactivateProductAsync()
+    {
+        if (SelectedProduct is null) return;
+        var result = MessageBox.Show(
+            $"Are you sure you want to deactivate {SelectedProduct.Name}?",
+            "Confirm Deactivation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question);
+
+        if (result != MessageBoxResult.Yes) return;
+
+        var commandResult = await _mediator.Send(new DeactivateProductCommand(SelectedProduct.Id));
+        if (commandResult.IsSuccess)
+        {
+            StatusMessage = $"{SelectedProduct.Name} deactivated.";
+            await LoadProductsAsync();
+        }
+        else
+        {
+            StatusMessage = commandResult.Error;
+        }
+    }
+
+    private async Task PreviousPageAsync()
+    {
+        if (PageNumber > 1)
+        {
+            PageNumber--;
+            await LoadProductsAsync();
+        }
+    }
+
+    private async Task NextPageAsync()
+    {
+        if (PageNumber < TotalPages)
+        {
+            PageNumber++;
             await LoadProductsAsync();
         }
     }
