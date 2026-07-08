@@ -2,12 +2,13 @@ using System.Windows.Input;
 using MediatR;
 using RMS.Modules.Products.Application.CreateProduct;
 using RMS.WPF.Commands;
+using RMS.WPF.Services;
 
 namespace RMS.WPF.ViewModels;
 
 public sealed class CreateProductViewModel : ProductFormViewModelBase
 {
-    public CreateProductViewModel(IMediator mediator) : base(mediator)
+    public CreateProductViewModel(IMediator mediator, IDialogService dialogService) : base(mediator, dialogService)
     {
         SaveCommand = new RelayCommand(_ => _ = SaveAsync());
         _ = LoadCategoriesAsync();
@@ -18,16 +19,12 @@ public sealed class CreateProductViewModel : ProductFormViewModelBase
 
     private async Task SaveAsync()
     {
-        if (SelectedCategory is null)
-        {
-            ErrorMessage = "Choose a category.";
-            return;
-        }
+        if (!ValidateRequiredFields()) return;
 
-        var result = await Mediator.Send(new CreateProductCommand(Name, Description, Barcode, SelectedCategory.Id, SalePrice, CostPrice));
+        var result = await Mediator.Send(new CreateProductCommand(Name, Description, Barcode, SelectedCategory!.Id, SalePrice, CostPrice));
         if (result.IsFailure)
         {
-            ErrorMessage = result.Error;
+            Fail(result.Error ?? "Could not create the product.");
             return;
         }
 

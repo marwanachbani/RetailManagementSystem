@@ -23,15 +23,38 @@
 
         <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="0">
             <DataGrid ItemsSource="{Binding Sales}"
+                      SelectedItem="{Binding SelectedSale}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       Style="{StaticResource ModernDataGridStyle}"
-                      BorderThickness="0">
+                      BorderThickness="0"
+                      RowHeight="40">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Sale Number" Binding="{Binding SaleNumber}" Width="140"/>
-                    <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="160"/>
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
-                    <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=C}" Width="120"/>
+                    <DataGridTextColumn Header="Sale Number" Binding="{Binding SaleNumber}" Width="130"/>
+                    <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="150"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="90"/>
+                    <DataGridTextColumn Header="SubTotal" Binding="{Binding SubTotal, StringFormat=C}" Width="90"/>
+                    <DataGridTextColumn Header="Discount" Binding="{Binding DiscountAmount, StringFormat=C}" Width="90"/>
+                    <DataGridTextColumn Header="Tax" Binding="{Binding TaxAmount, StringFormat=C}" Width="90"/>
+                    <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=C}" Width="100"/>
+                    <DataGridTemplateColumn Header="Actions" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Edit"
+                                            Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource SecondaryButtonStyle}"
+                                            Padding="8,3" FontSize="11" Margin="0,0,6,0"/>
+                                    <Button Content="Delete"
+                                            Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource DangerButtonStyle}"
+                                            Padding="8,3" FontSize="11"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

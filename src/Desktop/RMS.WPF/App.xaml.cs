@@ -36,6 +36,7 @@ using RMS.Modules.Suppliers.Application;
 using RMS.Modules.Suppliers.Infrastructure;
 using RMS.WPF.ViewModels;
 using RMS.WPF.ReceiptGeneration;
+using RMS.WPF.Services;
 using RMS.WPF.Views;
 using Serilog;
 
@@ -87,6 +88,14 @@ public partial class App : Application
         try
         {
             EnsureProgramDataFolders();
+
+            // SQLite has no native DECIMAL type — Microsoft.Data.Sqlite returns
+            // NUMERIC(18,2) columns (SalePrice, CostPrice, totals, etc.) as double,
+            // and Dapper's default mapping throws "Error parsing column N" trying to
+            // cast double -> decimal. Registering a handler fixes every query that
+            // reads a decimal column across every module, app-wide, in one place.
+            SqlMapper.AddTypeHandler(new DecimalTypeHandler());
+            SqlMapper.AddTypeHandler(new NullableDecimalTypeHandler());
 
             _host = Host.CreateDefaultBuilder()
                 .ConfigureServices(ConfigureServices)
@@ -165,9 +174,14 @@ public partial class App : Application
         loginViewModel.LoginSucceeded += (_, result) =>
         {
             Log.Information("User {UserName} logged in successfully.", result.UserName);
+
+            var session = _host!.Services.GetRequiredService<ICurrentSessionService>();
+            session.SignIn(result.UserId, result.UserName, result.FullName, result.Role);
+
             var mainViewModel = _host!.Services.GetRequiredService<MainWindowViewModel>();
-            mainViewModel.CurrentUserName = result.UserName;
-            var mainWindow = new MainWindow(mainViewModel);
+            mainViewModel.CurrentUserName = string.IsNullOrWhiteSpace(result.FullName) ? result.UserName : result.FullName;
+
+            var mainWindow = new MainWindow(mainViewModel, session);
             mainWindow.Show();
             loginWindow.Close();
         };
@@ -211,6 +225,9 @@ public partial class App : Application
     {
         services.AddRmsLogging(LogsDirectory);
 
+        services.AddSingleton<ICurrentSessionService, CurrentSessionService>();
+        services.AddSingleton<IDialogService, DialogService>();
+
         services.AddSingleton<IDbConnectionFactory>(_ => new SqliteConnectionFactory(DatabasePath));
         services.AddSingleton<IEventBus, InProcessEventBus>();
         services.AddSingleton<IEventStore, SqliteEventStore>();
@@ -227,6 +244,7 @@ public partial class App : Application
         services.AddProductsMigrations(ConnectionString);
 
         services.AddSingleton<IReceiptGenerator, WpfReceiptGenerator>();
+        services.AddSingleton<IPurchaseOrderDocumentGenerator, WpfPurchaseOrderDocumentGenerator>();
 
         // Inventory module — fully wired vertical slice.
         services.AddInventoryModule();
@@ -264,6 +282,7 @@ public partial class App : Application
         services.AddTransient<SalesViewModel>();
         services.AddTransient<CreateSaleViewModel>();
         services.AddTransient<SalesHistoryViewModel>();
+        services.AddTransient<SaleDetailsViewModel>();
         services.AddTransient<StockAdjustmentViewModel>();
         services.AddTransient<InventoryHistoryViewModel>();
         services.AddTransient<CustomerListViewModel>();
@@ -289,6 +308,7 @@ public partial class App : Application
         services.AddTransient<InventoryHistoryWindow>();
         services.AddTransient<CreateSaleWindow>();
         services.AddTransient<SalesHistoryWindow>();
+        services.AddTransient<SaleDetailsWindow>();
         services.AddTransient<CreateCustomerWindow>();
         services.AddTransient<EditCustomerWindow>();
 

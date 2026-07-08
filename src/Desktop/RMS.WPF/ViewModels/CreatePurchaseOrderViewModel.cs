@@ -7,6 +7,7 @@ using RMS.Modules.Purchasing.Application.Contracts;
 using RMS.Modules.Purchasing.Application.CreatePurchaseOrder;
 using RMS.Modules.Suppliers.Application.Contracts;
 using RMS.WPF.Commands;
+using RMS.WPF.Services;
 
 namespace RMS.WPF.ViewModels;
 
@@ -14,6 +15,7 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
     private readonly ISupplierReadStore _supplierReadStore;
+    private readonly IDialogService _dialogService;
     private string? _statusMessage;
     private string _searchText = string.Empty;
     private string _supplierSearchText = string.Empty;
@@ -24,18 +26,23 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
     private decimal _taxAmount;
     private decimal _totalAmount;
     private string? _notes;
+    private int _quantity = 1;
+    private decimal _unitCost;
+    private int _productRequestSequence;
 
-    public CreatePurchaseOrderViewModel(IMediator mediator, ISupplierReadStore supplierReadStore)
+    public CreatePurchaseOrderViewModel(IMediator mediator, ISupplierReadStore supplierReadStore, IDialogService dialogService)
     {
         _mediator = mediator;
         _supplierReadStore = supplierReadStore;
+        _dialogService = dialogService;
         SearchProductsCommand = new RelayCommand(_ => _ = LoadProductsAsync());
         SearchSuppliersCommand = new RelayCommand(_ => _ = LoadSuppliersAsync());
-        AddItemCommand = new RelayCommand(_ => _ = AddItemAsync(), _ => SelectedProduct is not null && Quantity > 0 && UnitCost > 0);
-        RemoveItemCommand = new RelayCommand(o => _ = RemoveItemAsync((PurchaseOrderItemDto)o!), _ => SelectedItem is not null);
-        SubmitCommand = new RelayCommand(_ => _ = SubmitAsync(), _ => Items.Count > 0 && SelectedSupplier is not null);
+        AddItemCommand = new RelayCommand(_ => _ = AddItemAsync());
+        RemoveItemCommand = new RelayCommand(o => _ = RemoveItemAsync((PurchaseOrderItemDto)o!));
+        SubmitCommand = new RelayCommand(_ => _ = SubmitAsync());
         CancelCommand = new RelayCommand(_ => CloseWithResult(false));
         _ = LoadProductsAsync();
+        _ = LoadSuppliersAsync();
     }
 
     public ObservableCollection<ProductReadModel> Products { get; } = new();
@@ -49,6 +56,7 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
         {
             _searchText = value;
             OnPropertyChanged();
+            _ = LoadProductsAsync();
         }
     }
 
@@ -59,6 +67,7 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
         {
             _supplierSearchText = value;
             OnPropertyChanged();
+            _ = LoadSuppliersAsync();
         }
     }
 
@@ -80,14 +89,25 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
         {
             _selectedProduct = value;
             OnPropertyChanged();
+            if (_selectedProduct is not null)
+                UnitCost = _selectedProduct.CostPrice;
             CommandManager.InvalidateRequerySuggested();
         }
     }
 
     public PurchaseOrderItemDto? SelectedItem { get; set; }
 
-    public int Quantity { get; set; } = 1;
-    public decimal UnitCost { get; set; }
+    public int Quantity
+    {
+        get => _quantity;
+        set { _quantity = value; OnPropertyChanged(); CommandManager.InvalidateRequerySuggested(); }
+    }
+
+    public decimal UnitCost
+    {
+        get => _unitCost;
+        set { _unitCost = value; OnPropertyChanged(); CommandManager.InvalidateRequerySuggested(); }
+    }
 
     public decimal TaxPercentage
     {
@@ -160,19 +180,36 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
     public bool? DialogResult { get; private set; }
     public event EventHandler? RequestClose;
 
-    private async Task LoadProductsAsync()
+    public async Task LoadProductsAsync()
     {
-        var query = new SearchProductsQuery(string.IsNullOrWhiteSpace(SearchText) ? null : SearchText.Trim(), false);
-        var result = await _mediator.Send(query);
-        Products.Clear();
-        if (result.IsSuccess)
+        var requestId = ++_productRequestSequence;
+        try
         {
-            foreach (var product in result.Value)
-                Products.Add(product);
+            var query = new SearchProductsQuery(string.IsNullOrWhiteSpace(SearchText) ? null : SearchText.Trim(), false);
+            var result = await _mediator.Send(query);
+
+            if (requestId != _productRequestSequence) return;
+
+            if (result.IsSuccess)
+            {
+                Products.Clear();
+                foreach (var product in result.Value)
+                    Products.Add(product);
+            }
+            else
+            {
+                StatusMessage = result.Error;
+                _dialogService.ShowError(result.Error ?? "Could not load the product catalog.");
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = ex.Message;
+            _dialogService.ShowError($"Could not load products: {ex.Message}");
         }
     }
 
-    private async Task LoadSuppliersAsync()
+    public async Task LoadSuppliersAsync()
     {
         var suppliers = await _supplierReadStore.SearchAsync(SupplierSearchText, false);
         Suppliers.Clear();
@@ -182,7 +219,22 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
 
     private Task AddItemAsync()
     {
-        if (SelectedProduct is null) return Task.CompletedTask;
+        if (SelectedProduct is null)
+        {
+            _dialogService.ShowWarning("Select a product from the list first.");
+            return Task.CompletedTask;
+        }
+        if (Quantity <= 0)
+        {
+            _dialogService.ShowWarning("Quantity must be greater than zero.");
+            return Task.CompletedTask;
+        }
+        if (UnitCost <= 0)
+        {
+            _dialogService.ShowWarning("Unit cost must be greater than zero.");
+            return Task.CompletedTask;
+        }
+
         var existing = Items.FirstOrDefault(i => i.ProductId == SelectedProduct.Id);
         if (existing is not null)
         {
@@ -199,6 +251,9 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
 
     private Task RemoveItemAsync(PurchaseOrderItemDto item)
     {
+        if (!_dialogService.Confirm($"Remove \"{item.ProductName}\" from this order?"))
+            return Task.CompletedTask;
+
         Items.Remove(item);
         RecalculateTotals();
         CommandManager.InvalidateRequerySuggested();
@@ -214,7 +269,17 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
 
     private async Task SubmitAsync()
     {
-        if (SelectedSupplier is null) return;
+        if (SelectedSupplier is null)
+        {
+            _dialogService.ShowWarning("Select a supplier before submitting the order.");
+            return;
+        }
+        if (Items.Count == 0)
+        {
+            _dialogService.ShowWarning("Add at least one product before submitting the order.");
+            return;
+        }
+
         var command = new CreatePurchaseOrderCommand(
             SelectedSupplier.Id, SelectedSupplier.CompanyName, Notes, TaxPercentage,
             Items.Select(i => new CreatePurchaseOrderItemDto(i.ProductId, i.ProductName, i.Quantity, i.UnitCost)).ToList());
@@ -222,6 +287,7 @@ public sealed class CreatePurchaseOrderViewModel : ViewModelBase
         if (result.IsFailure)
         {
             StatusMessage = result.Error;
+            _dialogService.ShowError(result.Error ?? "Could not create the purchase order.");
             return;
         }
         CloseWithResult(true);

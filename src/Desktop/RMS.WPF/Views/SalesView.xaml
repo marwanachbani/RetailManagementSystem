@@ -16,10 +16,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Header Card -->
@@ -37,50 +34,7 @@
             </DockPanel>
         </Border>
 
-        <!-- Status -->
-        <TextBlock Grid.Row="1"
-                   Text="{Binding StatusMessage}"
-                   Margin="0,0,0,12"
-                   Foreground="{StaticResource TextSecondaryBrush}"
-                   FontSize="12"/>
-
-        <!-- Table -->
-        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="0">
-            <DataGrid ItemsSource="{Binding Sales}"
-                      SelectedItem="{Binding SelectedSale}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      Style="{StaticResource ModernDataGridStyle}"
-                      BorderThickness="0">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Sale Number" Binding="{Binding SaleNumber}" Width="140"/>
-                    <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="160"/>
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
-                    <DataGridTextColumn Header="SubTotal" Binding="{Binding SubTotal, StringFormat=C}" Width="100"/>
-                    <DataGridTextColumn Header="Discount" Binding="{Binding DiscountAmount, StringFormat=C}" Width="100"/>
-                    <DataGridTextColumn Header="Tax" Binding="{Binding TaxAmount, StringFormat=C}" Width="100"/>
-                    <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=C}" Width="110"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
-
-        <Expander Grid.Row="3" Header="Sales History" IsExpanded="{Binding IsHistoryExpanded}" Margin="0,12,0,0">
-            <Border Style="{StaticResource CardBorderStyle}" Margin="0,8,0,0" Padding="0">
-                <ContentControl Content="{Binding HistoryViewModel}" />
-            </Border>
-        </Expander>
-
-        <!-- Footer -->
-        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Margin="0,12,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="View History" Command="{Binding ViewHistoryCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,24,0"/>
-
-                <Button Content="Prev" Command="{Binding PreviousPageCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
-                <TextBlock Text="{Binding PageNumber}" VerticalAlignment="Center" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"/>
-                <TextBlock Text="/" VerticalAlignment="Center" FontSize="13" Margin="4,0" Foreground="{StaticResource TextSecondaryBrush}"/>
-                <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center" FontSize="13" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
-                <Button Content="Next" Command="{Binding NextPageCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
-            </StackPanel>
-        </Border>
+        <!-- Sales History is the single source of truth for this screen -->
+        <ContentControl Grid.Row="1" Content="{Binding HistoryViewModel}" />
     </Grid>
 </UserControl>

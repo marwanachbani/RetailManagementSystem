@@ -1,10 +1,14 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Input;
 using MediatR;
 using RMS.Modules.Purchasing.Application.CancelPurchaseOrder;
 using RMS.Modules.Purchasing.Application.Contracts;
+using RMS.Modules.Purchasing.Application.GetPurchaseOrder;
 using RMS.Modules.Purchasing.Application.GetPurchaseOrdersPaged;
 using RMS.WPF.Commands;
+using RMS.WPF.ReceiptGeneration;
 using RMS.WPF.Views;
 
 namespace RMS.WPF.ViewModels;
@@ -14,6 +18,7 @@ public sealed class PurchaseOrdersViewModel : ViewModelBase
     private readonly IMediator _mediator;
     private readonly IServiceProvider _services;
     private readonly PurchaseHistoryViewModel _historyViewModel;
+    private readonly IPurchaseOrderDocumentGenerator _documentGenerator;
     private string? _statusMessage;
     private PurchaseOrderReadModel? _selectedOrder;
     private int _pageNumber = 1;
@@ -22,11 +27,16 @@ public sealed class PurchaseOrdersViewModel : ViewModelBase
     private int? _selectedStatusFilter;
     private bool _isHistoryExpanded;
 
-    public PurchaseOrdersViewModel(IMediator mediator, IServiceProvider services, PurchaseHistoryViewModel historyViewModel)
+    public PurchaseOrdersViewModel(
+        IMediator mediator,
+        IServiceProvider services,
+        PurchaseHistoryViewModel historyViewModel,
+        IPurchaseOrderDocumentGenerator documentGenerator)
     {
         _mediator = mediator;
         _services = services;
         _historyViewModel = historyViewModel;
+        _documentGenerator = documentGenerator;
         RefreshCommand = new RelayCommand(_ => _ = LoadAsync());
         NewPurchaseOrderCommand = new RelayCommand(_ => _ = OpenCreateDialog());
         EditPurchaseOrderCommand = new RelayCommand(_ => _ = OpenEditDialog(), _ => SelectedOrder is not null);
@@ -95,6 +105,8 @@ public sealed class PurchaseOrdersViewModel : ViewModelBase
         {
             _isHistoryExpanded = value;
             OnPropertyChanged();
+            if (_isHistoryExpanded)
+                _ = HistoryViewModel.LoadAsync();
         }
     }
 
@@ -187,11 +199,10 @@ public sealed class PurchaseOrdersViewModel : ViewModelBase
             await LoadAsync();
     }
 
-    private async Task ToggleHistoryAsync()
+    private Task ToggleHistoryAsync()
     {
         IsHistoryExpanded = !IsHistoryExpanded;
-        if (IsHistoryExpanded)
-            await HistoryViewModel.LoadAsync();
+        return Task.CompletedTask;
     }
 
     private async Task CancelOrderAsync()
@@ -206,11 +217,31 @@ public sealed class PurchaseOrdersViewModel : ViewModelBase
         await LoadAsync();
     }
 
-    private Task PrintOrder()
+    private async Task PrintOrder()
     {
-        // Print functionality can be implemented using the existing receipt generation pattern
-        StatusMessage = "Print functionality will be implemented in the UI layer.";
-        return Task.CompletedTask;
+        if (SelectedOrder is null) return;
+
+        // Re-fetch the full order so line items are guaranteed to be populated,
+        // even if the paged list query returns a lighter-weight projection.
+        var result = await _mediator.Send(new GetPurchaseOrderQuery(SelectedOrder.Id));
+        if (result.IsFailure || result.Value is null)
+        {
+            StatusMessage = result.Error ?? "Could not load purchase order for printing.";
+            return;
+        }
+
+        try
+        {
+            var outputDirectory = Path.Combine(App.ProgramDataDirectory, "PurchaseOrders");
+            var filePath = await _documentGenerator.GenerateAsync(result.Value, outputDirectory);
+            StatusMessage = $"Purchase order saved to {filePath}";
+
+            Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to print purchase order: {ex.Message}";
+        }
     }
 
     private bool CanReceiveGoods()

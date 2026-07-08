@@ -82,9 +82,7 @@ public sealed class ProductReadStore : IProductReadStore
          WHERE (@IncludeInactive = 1 OR p.IsActive = 1)
            AND (@SearchTerm IS NULL
                 OR p.Name LIKE @SearchPattern
-                OR p.ProductCode LIKE @SearchPattern
-                OR p.Barcode LIKE @SearchPattern
-                OR c.Name LIKE @SearchPattern)
+                OR p.Barcode LIKE @SearchPattern)
         """;
 
     private static object SearchParameters(string? searchTerm, bool includeInactive, int offset = 0, int pageSize = 25)

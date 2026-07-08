@@ -18,43 +18,100 @@
 
         <TextBlock Text="Edit Purchase Order" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,12"/>
 
-        <Grid Grid.Row="1" Margin="0,0,0,12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Text="{Binding SupplierSearchText, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Margin="0,0,8,0"/>
-            <Button Content="Search Suppliers" Command="{Binding SearchSuppliersCommand}" Grid.Column="1" Style="{StaticResource SecondaryButtonStyle}"/>
-        </Grid>
+        <TextBox Grid.Row="1"
+                 Text="{Binding SupplierSearchText, UpdateSourceTrigger=PropertyChanged}"
+                 Style="{StaticResource ModernTextBoxStyle}"
+                 Margin="0,0,0,8"/>
         <ListBox Grid.Row="2" ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier}" Height="100" Margin="0,0,0,12">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding CompanyName}"/>
+                    <TextBlock Text="{Binding CompanyName}" Padding="4,2"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
+        <!-- Product Selection: pick from the catalog list instead of typing an exact search -->
         <Grid Grid.Row="3" Margin="0,0,0,12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Margin="0,0,8,0"/>
-            <Button Content="Search Products" Command="{Binding SearchProductsCommand}" Grid.Column="1" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
-            <TextBox Text="{Binding Quantity}" Grid.Column="2" Width="60" Margin="0,0,8,0"/>
-            <Button Content="Add" Command="{Binding AddItemCommand}" Grid.Column="3" Style="{StaticResource PrimaryButtonStyle}"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBox Grid.Row="0"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     Style="{StaticResource ModernTextBoxStyle}"
+                     Margin="0,0,0,8"/>
+
+            <ListBox Grid.Row="1"
+                     ItemsSource="{Binding Products}"
+                     SelectedItem="{Binding SelectedProduct}"
+                     Height="140"
+                     Margin="0,0,0,8">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="4,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding CategoryName}" Foreground="{StaticResource TextSecondaryBrush}" Margin="8,0"/>
+                            <TextBlock Grid.Column="2" Text="{Binding CostPrice, StringFormat={}{0:C2}}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Qty:" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,4,0"/>
+                <TextBox Grid.Column="1" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="60" Margin="0,0,12,0"/>
+                <TextBlock Grid.Column="2" Text="Unit Cost:" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,4,0"/>
+                <TextBox Grid.Column="3" Text="{Binding UnitCost, UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="0,0,12,0"/>
+                <Button Grid.Column="5" Content="Add to Order" Command="{Binding AddItemCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
+            </Grid>
         </Grid>
 
-        <DataGrid Grid.Row="4" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False" IsReadOnly="True" Style="{StaticResource ModernDataGridStyle}" Margin="0,0,0,12">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Product" Binding="{Binding ProductName}" Width="*"/>
-                <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="80"/>
-                <DataGridTextColumn Header="Unit Cost" Binding="{Binding UnitCost, StringFormat=C}" Width="100"/>
-                <DataGridTextColumn Header="Total" Binding="{Binding TotalCost, StringFormat=C}" Width="100"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <ListBox Grid.Row="4" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" Margin="0,0,0,12" MaxHeight="220">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="4,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{Binding ProductName}" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <TextBlock Foreground="{StaticResource TextSecondaryBrush}" FontSize="11">
+                                <Run Text="{Binding Quantity, Mode=OneWay}"/>
+                                <Run Text=" × "/>
+                                <Run Text="{Binding UnitCost, StringFormat={}{0:C2}, Mode=OneWay}"/>
+                            </TextBlock>
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" Text="{Binding TotalCost, StringFormat={}{0:C2}}" VerticalAlignment="Center" Margin="8,0" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <Button Grid.Column="3"
+                                Content="×"
+                                Command="{Binding DataContext.RemoveItemCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                CommandParameter="{Binding}"
+                                Style="{StaticResource DangerButtonStyle}"
+                                Padding="4,2"
+                                FontSize="11"
+                                Width="28"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,12">
             <TextBlock Text="SubTotal: " FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
