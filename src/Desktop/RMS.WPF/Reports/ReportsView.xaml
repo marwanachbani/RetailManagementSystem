@@ -1,0 +1,74 @@
+<UserControl x:Class="RMS.WPF.Views.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:RMS.WPF.ViewModels"
+             xmlns:views="clr-namespace:RMS.WPF.Views"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewModels:ReportsViewModel}">
+
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type viewModels:SalesReportViewModel}">
+            <views:ReportView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:InventoryReportViewModel}">
+            <views:ReportView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:PurchasingReportViewModel}">
+            <views:ReportView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:CustomerReportViewModel}">
+            <views:ReportView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:SupplierReportViewModel}">
+            <views:ReportView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:ProductReportViewModel}">
+            <views:ReportView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:FinancialReportViewModel}">
+            <views:ReportView />
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left">
+                    <TextBlock Text="Reports" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="Business intelligence across sales, inventory, purchasing and finance" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <TabControl Grid.Row="1" Margin="0,0,0,0">
+            <TabItem Header="Sales">
+                <ContentControl Content="{Binding SalesViewModel}"/>
+            </TabItem>
+            <TabItem Header="Inventory">
+                <ContentControl Content="{Binding InventoryViewModel}"/>
+            </TabItem>
+            <TabItem Header="Purchasing">
+                <ContentControl Content="{Binding PurchasingViewModel}"/>
+            </TabItem>
+            <TabItem Header="Customers">
+                <ContentControl Content="{Binding CustomerViewModel}"/>
+            </TabItem>
+            <TabItem Header="Suppliers">
+                <ContentControl Content="{Binding SupplierViewModel}"/>
+            </TabItem>
+            <TabItem Header="Products">
+                <ContentControl Content="{Binding ProductViewModel}"/>
+            </TabItem>
+            <TabItem Header="Financial">
+                <ContentControl Content="{Binding FinancialViewModel}"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

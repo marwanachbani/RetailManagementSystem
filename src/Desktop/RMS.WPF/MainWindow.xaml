@@ -36,6 +36,9 @@
             <DataTemplate DataType="{x:Type viewModels:SalesViewModel}">
                 <views:SalesView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:ReportsViewModel}">
+                <views:ReportsView />
+            </DataTemplate>
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -86,11 +89,15 @@
                             Command="{Binding NavigateSuppliersCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>
-                    <Button Content="Purchasing"
-                            Command="{Binding NavigatePurchasingCommand}"
-                            Style="{StaticResource SidebarButtonStyle}"
-                            Margin="0,0,0,4"/>
-                    <Button Content="Logout"
+                     <Button Content="Purchasing"
+                             Command="{Binding NavigatePurchasingCommand}"
+                             Style="{StaticResource SidebarButtonStyle}"
+                             Margin="0,0,0,4"/>
+                     <Button Content="Reports"
+                             Command="{Binding NavigateReportsCommand}"
+                             Style="{StaticResource SidebarButtonStyle}"
+                             Margin="0,0,0,4"/>
+                     <Button Content="Logout"
                             Command="{Binding LogoutCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>

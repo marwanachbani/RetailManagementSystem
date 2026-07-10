@@ -40,6 +40,9 @@
     <ProjectReference Include="..\..\src\Modules\Suppliers\Application\RMS.Modules.Suppliers.Application.csproj" />
     <ProjectReference Include="..\..\src\Modules\Suppliers\Domain\RMS.Modules.Suppliers.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Suppliers\Infrastructure\RMS.Modules.Suppliers.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Reporting\Application\RMS.Modules.Reporting.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Reporting\Domain\RMS.Modules.Reporting.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Reporting\Infrastructure\RMS.Modules.Reporting.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

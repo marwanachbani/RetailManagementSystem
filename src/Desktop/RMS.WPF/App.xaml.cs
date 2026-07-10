@@ -32,6 +32,8 @@ using RMS.Modules.Sales.Infrastructure;
 using RMS.Modules.Sales.Infrastructure.ReceiptGeneration;
 using RMS.Modules.Purchasing.Application;
 using RMS.Modules.Purchasing.Infrastructure;
+using RMS.Modules.Reporting.Application;
+using RMS.Modules.Reporting.Infrastructure;
 using RMS.Modules.Suppliers.Application;
 using RMS.Modules.Suppliers.Infrastructure;
 using RMS.WPF.ViewModels;
@@ -266,6 +268,11 @@ public partial class App : Application
         services.AddPurchasingInfrastructure();
         services.AddPurchasingMigrations(ConnectionString);
 
+        // Reporting module — fully wired vertical slice.
+        services.AddReportingModule();
+        services.AddReportingInfrastructure();
+        services.AddReportingMigrations(ConnectionString);
+
         // Suppliers module — fully wired vertical slice.
         services.AddSuppliersModule();
         services.AddSuppliersInfrastructure();
@@ -302,6 +309,15 @@ public partial class App : Application
         services.AddTransient<ReceiveGoodsViewModel>();
         services.AddTransient<PurchaseHistoryViewModel>();
 
+        services.AddTransient<SalesReportViewModel>();
+        services.AddTransient<InventoryReportViewModel>();
+        services.AddTransient<PurchasingReportViewModel>();
+        services.AddTransient<CustomerReportViewModel>();
+        services.AddTransient<SupplierReportViewModel>();
+        services.AddTransient<ProductReportViewModel>();
+        services.AddTransient<FinancialReportViewModel>();
+        services.AddTransient<ReportsViewModel>();
+
         // WPF views.
         services.AddTransient<ProductListWindow>();
         services.AddTransient<CreateProductWindow>();
@@ -323,6 +339,8 @@ public partial class App : Application
         services.AddTransient<EditPurchaseOrderWindow>();
         services.AddTransient<ReceiveGoodsWindow>();
         services.AddTransient<PurchaseHistoryWindow>();
+
+        services.AddTransient<ReportsView>();
     }
 }
 

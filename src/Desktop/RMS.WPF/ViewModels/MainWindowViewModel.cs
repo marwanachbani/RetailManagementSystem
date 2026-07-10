@@ -19,7 +19,8 @@ public sealed class MainWindowViewModel : ViewModelBase
         SalesViewModel salesViewModel,
         CustomerListViewModel customerListViewModel,
         SupplierListViewModel supplierListViewModel,
-        PurchaseOrdersViewModel purchaseOrdersViewModel)
+        PurchaseOrdersViewModel purchaseOrdersViewModel,
+        ReportsViewModel reportsViewModel)
     {
         DashboardViewModel = dashboardViewModel;
         ProductListViewModel = productListViewModel;
@@ -28,6 +29,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         CustomerListViewModel = customerListViewModel;
         SupplierListViewModel = supplierListViewModel;
         PurchaseOrdersViewModel = purchaseOrdersViewModel;
+        ReportsViewModel = reportsViewModel;
         NavigateDashboardCommand = new RelayCommand(_ => ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard"));
         NavigateProductsCommand = new RelayCommand(_ => ShowView(ProductListViewModel, "Products", "Home / Products"));
         NavigateInventoryCommand = new RelayCommand(_ => ShowView(InventoryListViewModel, "Inventory", "Home / Inventory"));
@@ -35,6 +37,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         NavigateCustomersCommand = new RelayCommand(_ => ShowView(CustomerListViewModel, "Customers", "Home / Customers"));
         NavigateSuppliersCommand = new RelayCommand(_ => ShowView(SupplierListViewModel, "Suppliers", "Home / Suppliers"));
         NavigatePurchasingCommand = new RelayCommand(_ => ShowView(PurchaseOrdersViewModel, "Purchasing", "Home / Purchasing"));
+        NavigateReportsCommand = new RelayCommand(_ => ShowView(ReportsViewModel, "Reports", "Home / Reports"));
         LogoutCommand = new RelayCommand(_ => Logout());
 
         WireDashboardQuickActions(dashboardViewModel);
@@ -49,6 +52,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public CustomerListViewModel CustomerListViewModel { get; }
     public SupplierListViewModel SupplierListViewModel { get; }
     public PurchaseOrdersViewModel PurchaseOrdersViewModel { get; }
+    public ReportsViewModel ReportsViewModel { get; }
 
     public object? CurrentViewModel
     {
@@ -107,6 +111,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ICommand NavigateCustomersCommand { get; }
     public ICommand NavigateSuppliersCommand { get; }
     public ICommand NavigatePurchasingCommand { get; }
+    public ICommand NavigateReportsCommand { get; }
     public ICommand LogoutCommand { get; }
 
     public event EventHandler? RequestLogout;
