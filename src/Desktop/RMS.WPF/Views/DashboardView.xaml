@@ -10,74 +10,241 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
         <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
-            <StackPanel>
-                <TextBlock Text="Dashboard" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
-                <TextBlock Text="Overview of your retail system" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Dashboard" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="Overview of your retail business" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
+            </Grid>
         </Border>
 
-        <!-- Stats Cards -->
-        <Grid Grid.Row="1" Margin="0,0,0,12">
+        <!-- KPI Cards -->
+        <UniformGrid Grid.Row="1" Columns="5" Margin="0,0,0,12">
+            <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,6,6">
+                <StackPanel>
+                    <TextBlock Text="Today's Sales" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.TodaysSales}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="3,0,3,6">
+                <StackPanel>
+                    <TextBlock Text="Today's Revenue" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.TodaysRevenue, StringFormat={}{0:C}}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="3,0,3,6">
+                <StackPanel>
+                    <TextBlock Text="Monthly Revenue" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.MonthlyRevenue, StringFormat={}{0:C}}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="3,0,3,6">
+                <StackPanel>
+                    <TextBlock Text="Total Products" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.TotalProducts}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="6,0,0,6">
+                <StackPanel>
+                    <TextBlock Text="Active Customers" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.ActiveCustomers}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,6,0">
+                <StackPanel>
+                    <TextBlock Text="Active Suppliers" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.ActiveSuppliers}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="3,0,3,0">
+                <StackPanel>
+                    <TextBlock Text="POs Today" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.PurchaseOrdersToday}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="3,0,3,0">
+                <StackPanel>
+                    <TextBlock Text="Low Stock" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.LowStockProducts}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource WarningBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="3,0,3,0">
+                <StackPanel>
+                    <TextBlock Text="Out of Stock" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.OutOfStockProducts}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource ErrorBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="6,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Inventory Value" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding KpiSummary.InventoryValue, StringFormat={}{0:C}}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- Middle Row: Recent Sales / Purchases + Alerts -->
+        <Grid Grid.Row="2" Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="280"/>
             </Grid.ColumnDefinitions>
 
-            <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,8,0">
-                <StackPanel>
-                    <TextBlock Text="Total Products" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
-                    <TextBlock Text="{Binding TotalProducts}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,4,0,0"/>
-                </StackPanel>
-            </Border>
+            <!-- Left: Recent Sales & Purchases -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="4,0,4,0">
-                <StackPanel>
-                    <TextBlock Text="Active Products" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
-                    <TextBlock Text="{Binding ActiveProducts}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}" Margin="0,4,0,0"/>
-                </StackPanel>
-            </Border>
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,6,6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Recent Sales" FontSize="14" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding RecentSales}"
+                                  Style="{StaticResource ModernDataGridStyle}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  HeadersVisibility="Column">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Sale #" Binding="{Binding SaleNumber}" Width="*"/>
+                                <DataGridTextColumn Header="Amount" Binding="{Binding TotalAmount, StringFormat={}{0:C}}" Width="Auto"/>
+                                <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat={}{0:MM/dd HH:mm}}" Width="Auto"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="Auto"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
 
-            <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}" Margin="4,0,4,0">
-                <StackPanel>
-                    <TextBlock Text="Low Stock Items" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
-                    <TextBlock Text="{Binding LowStockCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource WarningBrush}" Margin="0,4,0,0"/>
-                </StackPanel>
-            </Border>
+                <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Margin="0,6,6,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Recent Purchases" FontSize="14" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding RecentPurchases}"
+                                  Style="{StaticResource ModernDataGridStyle}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  HeadersVisibility="Column">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="PO #" Binding="{Binding PurchaseNumber}" Width="*"/>
+                                <DataGridTextColumn Header="Supplier" Binding="{Binding SupplierName}" Width="*"/>
+                                <DataGridTextColumn Header="Amount" Binding="{Binding TotalAmount, StringFormat={}{0:C}}" Width="Auto"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="Auto"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
 
-            <Border Grid.Column="3" Style="{StaticResource CardBorderStyle}" Margin="8,0,0,0">
-                <StackPanel>
-                    <TextBlock Text="Out of Stock" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
-                    <TextBlock Text="{Binding OutOfStockCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource ErrorBrush}" Margin="0,4,0,0"/>
-                </StackPanel>
+            <!-- Right: Alerts -->
+            <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="6,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Alerts" FontSize="14" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                    <TextBlock Grid.Row="1" Text="Requires attention" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+                    <ItemsControl Grid.Row="2" ItemsSource="{Binding Alerts}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="6" Padding="12,10" Margin="0,0,0,8" Background="#FEF3C7" BorderBrush="#F59E0B" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding Message}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="#F59E0B" CornerRadius="999" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Count}" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
             </Border>
         </Grid>
 
-        <!-- Status -->
-        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}">
-            <StackPanel>
-                <TextBlock Text="System Status" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,12"/>
+        <!-- Bottom Row: Quick Actions + Recent Activity -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Quick Actions -->
+            <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,6,0">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="{Binding StatusMessage}" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="Modules Active:" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,4"/>
-                        <TextBlock Text="Identity" FontSize="12" Foreground="{StaticResource SuccessBrush}"/>
-                        <TextBlock Text="Products" FontSize="12" Foreground="{StaticResource SuccessBrush}"/>
-                        <TextBlock Text="Inventory" FontSize="12" Foreground="{StaticResource SuccessBrush}"/>
-                    </StackPanel>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Quick Actions" FontSize="14" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,12"/>
+                    <WrapPanel Grid.Row="1" Orientation="Horizontal">
+                        <Button Content="New Sale" Command="{Binding NewSaleCommand}" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,8"/>
+                        <Button Content="New Product" Command="{Binding NewProductCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,8"/>
+                        <Button Content="Stock Adj." Command="{Binding StockAdjustmentCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,8"/>
+                        <Button Content="New PO" Command="{Binding NewPurchaseOrderCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,8"/>
+                        <Button Content="New Customer" Command="{Binding NewCustomerCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,8"/>
+                        <Button Content="New Supplier" Command="{Binding NewSupplierCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,8"/>
+                    </WrapPanel>
                 </Grid>
-            </StackPanel>
-        </Border>
+            </Border>
+
+            <!-- Recent Activity Timeline -->
+            <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="6,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Recent Activity" FontSize="14" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" MaxHeight="180">
+                        <ItemsControl ItemsSource="{Binding RecentActivities}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding IconGlyph}" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{Binding Description}" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding ActivityType}" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding Timestamp, StringFormat={}{0:MM/dd HH:mm}}" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

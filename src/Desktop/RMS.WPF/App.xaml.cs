@@ -271,6 +271,9 @@ public partial class App : Application
         services.AddSuppliersInfrastructure();
         services.AddSuppliersMigrations(ConnectionString);
 
+        // Dashboard queries live in the WPF assembly — register MediatR handlers.
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(App).Assembly));
+
         // WPF view models.
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainWindowViewModel>();

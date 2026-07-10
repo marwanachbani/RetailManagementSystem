@@ -36,6 +36,9 @@ public sealed class MainWindowViewModel : ViewModelBase
         NavigateSuppliersCommand = new RelayCommand(_ => ShowView(SupplierListViewModel, "Suppliers", "Home / Suppliers"));
         NavigatePurchasingCommand = new RelayCommand(_ => ShowView(PurchaseOrdersViewModel, "Purchasing", "Home / Purchasing"));
         LogoutCommand = new RelayCommand(_ => Logout());
+
+        WireDashboardQuickActions(dashboardViewModel);
+
         ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard");
     }
 
@@ -122,5 +125,15 @@ public sealed class MainWindowViewModel : ViewModelBase
         if (result != MessageBoxResult.Yes) return;
 
         RequestLogout?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void WireDashboardQuickActions(DashboardViewModel dashboard)
+    {
+        dashboard.RequestNewSale += (_, _) => ShowView(SalesViewModel, "Sales", "Home / Sales");
+        dashboard.RequestNewProduct += (_, _) => ShowView(ProductListViewModel, "Products", "Home / Products");
+        dashboard.RequestStockAdjustment += (_, _) => ShowView(InventoryListViewModel, "Inventory", "Home / Inventory");
+        dashboard.RequestNewPurchaseOrder += (_, _) => ShowView(PurchaseOrdersViewModel, "Purchasing", "Home / Purchasing");
+        dashboard.RequestNewCustomer += (_, _) => ShowView(CustomerListViewModel, "Customers", "Home / Customers");
+        dashboard.RequestNewSupplier += (_, _) => ShowView(SupplierListViewModel, "Suppliers", "Home / Suppliers");
     }
 }
