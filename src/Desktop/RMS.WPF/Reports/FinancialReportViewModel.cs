@@ -58,6 +58,7 @@ public sealed class FinancialReportViewModel : ReportViewModelBase
         finally
         {
             IsLoading = false;
+            OnPropertyChanged(nameof(Items));
         }
     }
 }

@@ -58,6 +58,10 @@
     <ProjectReference Include="..\..\Modules\Purchasing\Domain\RMS.Modules.Purchasing.Domain.csproj" />
     <ProjectReference Include="..\..\Modules\Purchasing\Application\RMS.Modules.Purchasing.Application.csproj" />
     <ProjectReference Include="..\..\Modules\Purchasing\Infrastructure\RMS.Modules.Purchasing.Infrastructure.csproj" />
+
+    <ProjectReference Include="..\..\Modules\Settings\Domain\RMS.Modules.Settings.Domain.csproj" />
+    <ProjectReference Include="..\..\Modules\Settings\Application\RMS.Modules.Settings.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Settings\Infrastructure\RMS.Modules.Settings.Infrastructure.csproj" />
   </ItemGroup>
   
 </Project>

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:RMS.WPF.Views"
         xmlns:viewModels="clr-namespace:RMS.WPF.ViewModels"
+        xmlns:settings="clr-namespace:RMS.WPF.Settings"
         Title="Retail Management System" 
         Height="700" 
         Width="1200"
@@ -38,6 +39,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:ReportsViewModel}">
                 <views:ReportsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type settings:SettingsViewModel}">
+                <settings:SettingsView />
             </DataTemplate>
         </Grid.Resources>
 
@@ -97,7 +101,11 @@
                              Command="{Binding NavigateReportsCommand}"
                              Style="{StaticResource SidebarButtonStyle}"
                              Margin="0,0,0,4"/>
-                     <Button Content="Logout"
+                     <Button Content="Settings"
+                             Command="{Binding NavigateSettingsCommand}"
+                             Style="{StaticResource SidebarButtonStyle}"
+                             Margin="0,0,0,4"/>
+                      <Button Content="Logout"
                             Command="{Binding LogoutCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>

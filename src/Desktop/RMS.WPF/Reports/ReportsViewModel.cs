@@ -35,7 +35,17 @@ public sealed class ReportsViewModel : ViewModelBase
         SupplierViewModel = supplierViewModel;
         ProductViewModel = productViewModel;
         FinancialViewModel = financialViewModel;
+    }
 
-        _ = SalesViewModel.LoadAsync();
+    public async Task LoadAllAsync()
+    {
+        await Task.WhenAll(
+            SalesViewModel.LoadAsync(),
+            InventoryViewModel.LoadAsync(),
+            PurchasingViewModel.LoadAsync(),
+            CustomerViewModel.LoadAsync(),
+            SupplierViewModel.LoadAsync(),
+            ProductViewModel.LoadAsync(),
+            FinancialViewModel.LoadAsync());
     }
 }

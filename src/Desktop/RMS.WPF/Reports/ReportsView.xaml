@@ -47,26 +47,27 @@
             </DockPanel>
         </Border>
 
-        <TabControl Grid.Row="1" Margin="0,0,0,0">
-            <TabItem Header="Sales">
+        <TabControl Grid.Row="1" Margin="0,0,0,0"
+                    Style="{StaticResource ReportTabControlStyle}">
+            <TabItem Header="Sales" Style="{StaticResource ReportTabItemStyle}">
                 <ContentControl Content="{Binding SalesViewModel}"/>
             </TabItem>
-            <TabItem Header="Inventory">
+            <TabItem Header="Inventory" Style="{StaticResource ReportTabItemStyle}">
                 <ContentControl Content="{Binding InventoryViewModel}"/>
             </TabItem>
-            <TabItem Header="Purchasing">
+            <TabItem Header="Purchasing" Style="{StaticResource ReportTabItemStyle}">
                 <ContentControl Content="{Binding PurchasingViewModel}"/>
             </TabItem>
-            <TabItem Header="Customers">
+            <TabItem Header="Customers" Style="{StaticResource ReportTabItemStyle}">
                 <ContentControl Content="{Binding CustomerViewModel}"/>
             </TabItem>
-            <TabItem Header="Suppliers">
+            <TabItem Header="Suppliers" Style="{StaticResource ReportTabItemStyle}">
                 <ContentControl Content="{Binding SupplierViewModel}"/>
             </TabItem>
-            <TabItem Header="Products">
+            <TabItem Header="Products" Style="{StaticResource ReportTabItemStyle}">
                 <ContentControl Content="{Binding ProductViewModel}"/>
             </TabItem>
-            <TabItem Header="Financial">
+            <TabItem Header="Financial" Style="{StaticResource ReportTabItemStyle}">
                 <ContentControl Content="{Binding FinancialViewModel}"/>
             </TabItem>
         </TabControl>

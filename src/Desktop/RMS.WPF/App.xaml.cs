@@ -36,9 +36,14 @@ using RMS.Modules.Reporting.Application;
 using RMS.Modules.Reporting.Infrastructure;
 using RMS.Modules.Suppliers.Application;
 using RMS.Modules.Suppliers.Infrastructure;
+using RMS.Modules.Settings.Application;
+using RMS.Modules.Settings.Application.Services;
+using RMS.Modules.Settings.Domain;
+using RMS.Modules.Settings.Infrastructure;
 using RMS.WPF.ViewModels;
-using RMS.WPF.ReceiptGeneration;
+using RMS.WPF.Settings;
 using RMS.WPF.Services;
+using RMS.WPF.ReceiptGeneration;
 using RMS.WPF.Views;
 using Serilog;
 
@@ -113,6 +118,7 @@ public partial class App : Application
 
                 SeedAdminAccountAsync(scope.ServiceProvider).GetAwaiter().GetResult();
                 DevelopmentSeed.SeedAsync(scope.ServiceProvider).GetAwaiter().GetResult();
+                EnsureSettingsFolders(scope.ServiceProvider);
             }
 
             Log.Information("RMS application starting up. Database: {DbPath}", DatabasePath);
@@ -199,6 +205,21 @@ public partial class App : Application
         Directory.CreateDirectory(BackupsDirectory);
     }
 
+    /// <summary>
+    /// Creates the default ProgramData folder structure required by the Settings
+    /// module so exports, reports, receipts, backups and other artifacts always
+    /// have a valid destination on first launch.
+    /// </summary>
+    private static void EnsureSettingsFolders(IServiceProvider services)
+    {
+        var resolver = services.GetService<IFolderResolver>();
+        if (resolver is null) return;
+
+        Directory.CreateDirectory(resolver.BaseDirectory);
+        foreach (var folder in SettingCatalog.FolderDefinitions)
+            resolver.EnsureExists(resolver.GetDefaultPath(folder.FolderSubPath!));
+    }
+
     private static async Task SeedAdminAccountAsync(IServiceProvider services)
     {
         const string userName = "admin";
@@ -229,6 +250,7 @@ public partial class App : Application
 
         services.AddSingleton<ICurrentSessionService, CurrentSessionService>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IFolderBrowserService, FolderBrowserService>();
 
         services.AddSingleton<IDbConnectionFactory>(_ => new SqliteConnectionFactory(DatabasePath));
         services.AddSingleton<IEventBus, InProcessEventBus>();
@@ -277,6 +299,11 @@ public partial class App : Application
         services.AddSuppliersModule();
         services.AddSuppliersInfrastructure();
         services.AddSuppliersMigrations(ConnectionString);
+
+        // Settings module — fully wired vertical slice.
+        services.AddSettingsModule(ProgramDataDirectory);
+        services.AddSettingsInfrastructure();
+        services.AddSettingsMigrations(ConnectionString);
 
         // Dashboard queries live in the WPF assembly — register MediatR handlers.
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(App).Assembly));
@@ -341,6 +368,10 @@ public partial class App : Application
         services.AddTransient<PurchaseHistoryWindow>();
 
         services.AddTransient<ReportsView>();
+
+        // Settings module — WPF shell.
+        services.AddTransient<SettingsViewModel>();
+        services.AddTransient<SettingsView>();
     }
 }
 

@@ -1,0 +1,44 @@
+<UserControl x:Class="RMS.WPF.Settings.BackupSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:settings="clr-namespace:RMS.WPF.Settings"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=settings:BackupSettingsViewModel}">
+
+    <Border Style="{StaticResource CardBorderStyle}" MaxWidth="760">
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Backup Frequency" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding FrequencyOptions}" SelectedItem="{Binding Frequency}" Style="{StaticResource ModernComboBoxStyle}" Width="200" HorizontalAlignment="Left"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Backup Time" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Width="120" HorizontalAlignment="Left"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Content="Maximum Backup Count" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding MaximumCount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Width="120" HorizontalAlignment="Left"/>
+
+                <CheckBox Grid.Row="3" Grid.Column="1" Content="Automatic Backup" IsChecked="{Binding AutomaticBackup}" Margin="0,6"/>
+                <CheckBox Grid.Row="4" Grid.Column="1" Content="Compress Backup" IsChecked="{Binding Compress}" Margin="0,6"/>
+                <CheckBox Grid.Row="5" Grid.Column="1" Content="Verify Backup Integrity" IsChecked="{Binding VerifyIntegrity}" Margin="0,6"/>
+            </Grid>
+
+            <Button Content="Restore Backup…" Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+        </StackPanel>
+    </Border>
+</UserControl>

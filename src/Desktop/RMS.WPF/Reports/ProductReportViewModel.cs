@@ -58,6 +58,7 @@ public sealed class ProductReportViewModel : ReportViewModelBase
         finally
         {
             IsLoading = false;
+            OnPropertyChanged(nameof(Items));
         }
     }
 }

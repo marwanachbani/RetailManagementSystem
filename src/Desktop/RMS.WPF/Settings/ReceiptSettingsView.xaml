@@ -1,0 +1,50 @@
+<UserControl x:Class="RMS.WPF.Settings.ReceiptSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:settings="clr-namespace:RMS.WPF.Settings"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=settings:ReceiptSettingsViewModel}">
+
+    <Border Style="{StaticResource CardBorderStyle}" MaxWidth="760">
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Receipt Header" VerticalAlignment="Top" Margin="0,8,0,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Header, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" AcceptsReturn="True" TextWrapping="Wrap" Height="60" VerticalContentAlignment="Top"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Receipt Footer" VerticalAlignment="Top" Margin="0,8,0,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Footer, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" AcceptsReturn="True" TextWrapping="Wrap" Height="60" VerticalContentAlignment="Top"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Content="Store Logo" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding StoreLogo, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}"/>
+
+                <Label Grid.Row="3" Grid.Column="0" Content="Paper Width (mm)" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding PaperWidth, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Width="120" HorizontalAlignment="Left"/>
+
+                <CheckBox Grid.Row="4" Grid.Column="1" Content="Show Tax Number" IsChecked="{Binding ShowTaxNumber}" Margin="0,6"/>
+                <CheckBox Grid.Row="5" Grid.Column="1" Content="Show Cashier" IsChecked="{Binding ShowCashier}" Margin="0,6"/>
+                <CheckBox Grid.Row="6" Grid.Column="1" Content="Show Barcode" IsChecked="{Binding ShowBarcode}" Margin="0,6"/>
+                <CheckBox Grid.Row="7" Grid.Column="1" Content="Show QR Code" IsChecked="{Binding ShowQrCode}" Margin="0,6"/>
+                <CheckBox Grid.Row="8" Grid.Column="1" Content="Automatic Printing" IsChecked="{Binding AutomaticPrinting}" Margin="0,6"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

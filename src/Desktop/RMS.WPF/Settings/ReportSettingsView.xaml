@@ -1,0 +1,53 @@
+<UserControl x:Class="RMS.WPF.Settings.ReportSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:settings="clr-namespace:RMS.WPF.Settings"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=settings:ReportSettingsViewModel}">
+
+    <Border Style="{StaticResource CardBorderStyle}" MaxWidth="760">
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Default Report Folder" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DefaultReportFolder, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="File Name Pattern" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding FileNamePattern, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Content="PDF Quality" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding PdfQualityOptions}" SelectedItem="{Binding PdfQuality}" Style="{StaticResource ModernComboBoxStyle}" Width="200" HorizontalAlignment="Left"/>
+
+                <Label Grid.Row="3" Grid.Column="0" Content="CSV Delimiter" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding CsvDelimiterOptions}" SelectedItem="{Binding CsvDelimiter}" Style="{StaticResource ModernComboBoxStyle}" Width="200" HorizontalAlignment="Left"/>
+
+                <Label Grid.Row="4" Grid.Column="0" Content="Excel Export Format" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding ExcelExportFormatOptions}" SelectedItem="{Binding ExcelExportFormat}" Style="{StaticResource ModernComboBoxStyle}" Width="200" HorizontalAlignment="Left"/>
+
+                <Label Grid.Row="5" Grid.Column="0" Content="Print Orientation" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding PrintOrientationOptions}" SelectedItem="{Binding PrintOrientation}" Style="{StaticResource ModernComboBoxStyle}" Width="200" HorizontalAlignment="Left"/>
+
+                <CheckBox Grid.Row="6" Grid.Column="1" Content="Include Company Logo" IsChecked="{Binding IncludeCompanyLogo}" Margin="0,6"/>
+                <CheckBox Grid.Row="7" Grid.Column="1" Content="Include Report Footer" IsChecked="{Binding IncludeReportFooter}" Margin="0,6"/>
+                <CheckBox Grid.Row="8" Grid.Column="1" Content="Automatic Report Numbering" IsChecked="{Binding AutomaticNumbering}" Margin="0,6"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

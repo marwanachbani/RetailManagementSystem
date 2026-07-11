@@ -43,6 +43,9 @@
     <ProjectReference Include="..\..\src\Modules\Reporting\Application\RMS.Modules.Reporting.Application.csproj" />
     <ProjectReference Include="..\..\src\Modules\Reporting\Domain\RMS.Modules.Reporting.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Reporting\Infrastructure\RMS.Modules.Reporting.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Settings\Domain\RMS.Modules.Settings.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Settings\Application\RMS.Modules.Settings.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Settings\Infrastructure\RMS.Modules.Settings.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

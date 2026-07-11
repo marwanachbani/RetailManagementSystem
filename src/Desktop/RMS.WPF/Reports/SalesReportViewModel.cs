@@ -77,6 +77,7 @@ public sealed class SalesReportViewModel : ReportViewModelBase
         finally
         {
             IsLoading = false;
+            OnPropertyChanged(nameof(Items));
         }
     }
 }

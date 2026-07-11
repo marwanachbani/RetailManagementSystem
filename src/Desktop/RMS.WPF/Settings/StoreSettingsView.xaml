@@ -1,0 +1,31 @@
+<UserControl x:Class="RMS.WPF.Settings.StoreSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:settings="clr-namespace:RMS.WPF.Settings"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=settings:StoreSettingsViewModel}">
+
+    <Border Style="{StaticResource CardBorderStyle}" MaxWidth="760">
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Business Logo" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding BusinessLogo, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Company Address" VerticalAlignment="Top" Margin="0,8,0,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CompanyAddress, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}"
+                         AcceptsReturn="True" TextWrapping="Wrap" Height="80" VerticalContentAlignment="Top"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

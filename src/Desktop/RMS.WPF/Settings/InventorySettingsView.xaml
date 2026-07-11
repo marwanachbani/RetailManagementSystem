@@ -1,0 +1,41 @@
+<UserControl x:Class="RMS.WPF.Settings.InventorySettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:settings="clr-namespace:RMS.WPF.Settings"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=settings:InventorySettingsViewModel}">
+
+    <Border Style="{StaticResource CardBorderStyle}" MaxWidth="760">
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Default Low Stock Threshold" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DefaultLowStockThreshold, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}" Width="120" HorizontalAlignment="Left"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Default Warehouse" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DefaultWarehouse, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Content="Default Adjustment Reason" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding DefaultStockAdjustmentReason, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBoxStyle}"/>
+
+                <CheckBox Grid.Row="3" Grid.Column="1" Content="Allow Negative Stock" IsChecked="{Binding AllowNegativeStock}" Margin="0,6"/>
+                <CheckBox Grid.Row="4" Grid.Column="1" Content="Automatic Stock Alerts" IsChecked="{Binding AutomaticStockAlerts}" Margin="0,6"/>
+                <CheckBox Grid.Row="5" Grid.Column="1" Content="Require Confirmation For Adjustments" IsChecked="{Binding RequireConfirmationForAdjustments}" Margin="0,6"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

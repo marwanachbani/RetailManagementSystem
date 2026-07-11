@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
 using RMS.WPF.Commands;
+using RMS.WPF.Settings;
 
 namespace RMS.WPF.ViewModels;
 
@@ -20,7 +21,8 @@ public sealed class MainWindowViewModel : ViewModelBase
         CustomerListViewModel customerListViewModel,
         SupplierListViewModel supplierListViewModel,
         PurchaseOrdersViewModel purchaseOrdersViewModel,
-        ReportsViewModel reportsViewModel)
+        ReportsViewModel reportsViewModel,
+        SettingsViewModel settingsViewModel)
     {
         DashboardViewModel = dashboardViewModel;
         ProductListViewModel = productListViewModel;
@@ -30,6 +32,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         SupplierListViewModel = supplierListViewModel;
         PurchaseOrdersViewModel = purchaseOrdersViewModel;
         ReportsViewModel = reportsViewModel;
+        SettingsViewModel = settingsViewModel;
         NavigateDashboardCommand = new RelayCommand(_ => ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard"));
         NavigateProductsCommand = new RelayCommand(_ => ShowView(ProductListViewModel, "Products", "Home / Products"));
         NavigateInventoryCommand = new RelayCommand(_ => ShowView(InventoryListViewModel, "Inventory", "Home / Inventory"));
@@ -38,6 +41,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         NavigateSuppliersCommand = new RelayCommand(_ => ShowView(SupplierListViewModel, "Suppliers", "Home / Suppliers"));
         NavigatePurchasingCommand = new RelayCommand(_ => ShowView(PurchaseOrdersViewModel, "Purchasing", "Home / Purchasing"));
         NavigateReportsCommand = new RelayCommand(_ => ShowView(ReportsViewModel, "Reports", "Home / Reports"));
+        NavigateSettingsCommand = new RelayCommand(_ => ShowView(SettingsViewModel, "Settings", "Home / Settings"));
         LogoutCommand = new RelayCommand(_ => Logout());
 
         WireDashboardQuickActions(dashboardViewModel);
@@ -53,6 +57,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public SupplierListViewModel SupplierListViewModel { get; }
     public PurchaseOrdersViewModel PurchaseOrdersViewModel { get; }
     public ReportsViewModel ReportsViewModel { get; }
+    public SettingsViewModel SettingsViewModel { get; }
 
     public object? CurrentViewModel
     {
@@ -112,6 +117,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ICommand NavigateSuppliersCommand { get; }
     public ICommand NavigatePurchasingCommand { get; }
     public ICommand NavigateReportsCommand { get; }
+    public ICommand NavigateSettingsCommand { get; }
     public ICommand LogoutCommand { get; }
 
     public event EventHandler? RequestLogout;
