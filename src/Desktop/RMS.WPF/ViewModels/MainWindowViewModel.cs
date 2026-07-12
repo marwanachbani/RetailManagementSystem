@@ -3,6 +3,7 @@ using System.Windows.Input;
 using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Persistence;
 using RMS.Modules.Identity.Application.IntegrationEvents;
+using RMS.WPF.Backup;
 using RMS.WPF.Commands;
 using RMS.WPF.Services;
 using RMS.WPF.Settings;
@@ -30,6 +31,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         ReportsViewModel reportsViewModel,
         SettingsViewModel settingsViewModel,
         AuditLogViewModel auditLogViewModel,
+        BackupAndRestoreViewModel backupAndRestoreViewModel,
         IEventBus eventBus,
         ICurrentSessionService currentSessionService)
     {
@@ -45,6 +47,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         ReportsViewModel = reportsViewModel;
         SettingsViewModel = settingsViewModel;
         AuditLogViewModel = auditLogViewModel;
+        BackupAndRestoreViewModel = backupAndRestoreViewModel;
         NavigateDashboardCommand = new RelayCommand(_ => ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard"));
         NavigateProductsCommand = new RelayCommand(_ => ShowView(ProductListViewModel, "Products", "Home / Products"));
         NavigateInventoryCommand = new RelayCommand(_ => ShowView(InventoryListViewModel, "Inventory", "Home / Inventory"));
@@ -55,6 +58,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         NavigateReportsCommand = new RelayCommand(_ => ShowView(ReportsViewModel, "Reports", "Home / Reports"));
         NavigateSettingsCommand = new RelayCommand(_ => ShowView(SettingsViewModel, "Settings", "Home / Settings"));
         NavigateAuditCommand = new RelayCommand(_ => ShowView(AuditLogViewModel, "Audit Log", "Home / Audit Log"));
+        NavigateBackupCommand = new RelayCommand(_ => ShowView(BackupAndRestoreViewModel, "Backup & Restore", "Home / Administration / Backup & Restore"));
         LogoutCommand = new RelayCommand(_ => Logout());
 
         WireDashboardQuickActions(dashboardViewModel);
@@ -72,6 +76,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ReportsViewModel ReportsViewModel { get; }
     public SettingsViewModel SettingsViewModel { get; }
     public AuditLogViewModel AuditLogViewModel { get; }
+    public BackupAndRestoreViewModel BackupAndRestoreViewModel { get; }
 
     public object? CurrentViewModel
     {
@@ -133,6 +138,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ICommand NavigateReportsCommand { get; }
     public ICommand NavigateSettingsCommand { get; }
     public ICommand NavigateAuditCommand { get; }
+    public ICommand NavigateBackupCommand { get; }
     public ICommand LogoutCommand { get; }
 
     public event EventHandler? RequestLogout;

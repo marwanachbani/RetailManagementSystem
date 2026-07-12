@@ -14,6 +14,7 @@
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
     <PackageReference Include="FluentMigrator.Runner" Version="6.2.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
@@ -50,6 +51,10 @@
     <ProjectReference Include="..\..\src\Modules\Audit\Domain\RMS.Modules.Audit.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Audit\Application\RMS.Modules.Audit.Application.csproj" />
     <ProjectReference Include="..\..\src\Modules\Audit\Infrastructure\RMS.Modules.Audit.Infrastructure.csproj" />
+
+    <ProjectReference Include="..\..\src\Modules\Backup\Domain\RMS.Modules.Backup.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Backup\Application\RMS.Modules.Backup.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Backup\Infrastructure\RMS.Modules.Backup.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

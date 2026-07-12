@@ -66,6 +66,10 @@
     <ProjectReference Include="..\..\Modules\Audit\Domain\RMS.Modules.Audit.Domain.csproj" />
     <ProjectReference Include="..\..\Modules\Audit\Application\RMS.Modules.Audit.Application.csproj" />
     <ProjectReference Include="..\..\Modules\Audit\Infrastructure\RMS.Modules.Audit.Infrastructure.csproj" />
+
+    <ProjectReference Include="..\..\Modules\Backup\Domain\RMS.Modules.Backup.Domain.csproj" />
+    <ProjectReference Include="..\..\Modules\Backup\Application\RMS.Modules.Backup.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Backup\Infrastructure\RMS.Modules.Backup.Infrastructure.csproj" />
   </ItemGroup>
   
 </Project>

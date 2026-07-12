@@ -1,0 +1,50 @@
+<UserControl x:Class="RMS.WPF.Backup.BackupAndRestoreView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:backup="clr-namespace:RMS.WPF.Backup"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=backup:BackupAndRestoreViewModel}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Backup &amp; Restore" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="Protect your business data — create, schedule and restore backups" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="Refresh All" Command="{Binding RefreshAllCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
+            </Grid>
+        </Border>
+
+        <TabControl Grid.Row="1"
+                    SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}"
+                    Style="{StaticResource ReportTabControlStyle}">
+            <TabItem Header="Dashboard" Style="{StaticResource ReportTabItemStyle}">
+                <backup:BackupDashboardView DataContext="{Binding Dashboard}"/>
+            </TabItem>
+            <TabItem Header="Manual Backup" Style="{StaticResource ReportTabItemStyle}">
+                <backup:ManualBackupView DataContext="{Binding Manual}"/>
+            </TabItem>
+            <TabItem Header="Restore Backup" Style="{StaticResource ReportTabItemStyle}">
+                <backup:RestoreBackupView DataContext="{Binding Restore}"/>
+            </TabItem>
+            <TabItem Header="Backup History" Style="{StaticResource ReportTabItemStyle}">
+                <backup:BackupHistoryView DataContext="{Binding History}"/>
+            </TabItem>
+            <TabItem Header="Settings Summary" Style="{StaticResource ReportTabItemStyle}">
+                <backup:BackupSettingsSummaryView DataContext="{Binding Settings}"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

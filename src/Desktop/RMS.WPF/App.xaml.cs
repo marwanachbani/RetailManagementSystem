@@ -42,6 +42,10 @@ using RMS.Modules.Settings.Domain;
 using RMS.Modules.Settings.Infrastructure;
 using RMS.Modules.Audit.Application;
 using RMS.Modules.Audit.Infrastructure;
+using RMS.Modules.Backup.Application;
+using RMS.Modules.Backup.Application.Contracts;
+using RMS.Modules.Backup.Infrastructure;
+using RMS.WPF.Backup;
 using RMS.WPF.ViewModels;
 using RMS.WPF.Settings;
 using RMS.WPF.Services;
@@ -124,6 +128,9 @@ public partial class App : Application
             }
 
             Log.Information("RMS application starting up. Database: {DbPath}", DatabasePath);
+
+            // Start the background backup scheduler (honours the Settings configuration).
+            _host.Services.GetRequiredService<IBackupScheduler>().Start();
 
             ShowLoginWindow();
             base.OnStartup(e);
@@ -313,6 +320,13 @@ public partial class App : Application
         services.AddAuditInfrastructure();
         services.AddAuditMigrations(ConnectionString);
 
+        // Backup & Restore module — fully wired vertical slice.
+        services.AddBackupModule();
+        services.AddBackupInfrastructure();
+        services.AddBackupMigrations(ConnectionString);
+        services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
+        services.AddSingleton<IBackupSettingsProvider, BackupSettingsProvider>();
+
         // Dashboard queries live in the WPF assembly — register MediatR handlers.
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(App).Assembly));
 
@@ -381,6 +395,15 @@ public partial class App : Application
         services.AddTransient<AuditLogViewModel>();
         services.AddTransient<AuditLogView>();
         services.AddTransient<AuditLogDetailsWindow>();
+
+        // Backup & Restore module — WPF shell.
+        services.AddTransient<BackupAndRestoreViewModel>();
+        services.AddTransient<BackupDashboardViewModel>();
+        services.AddTransient<ManualBackupViewModel>();
+        services.AddTransient<RestoreBackupViewModel>();
+        services.AddTransient<BackupHistoryViewModel>();
+        services.AddTransient<BackupSettingsSummaryViewModel>();
+        services.AddTransient<BackupAndRestoreView>();
 
         // Settings module — WPF shell.
         services.AddTransient<SettingsViewModel>();

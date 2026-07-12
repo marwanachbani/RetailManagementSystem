@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>RMS.Modules.Backup.Infrastructure</RootNamespace>
+    <AssemblyName>RMS.Modules.Backup.Infrastructure</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="FluentMigrator.Runner" Version="6.2.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\RMS.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\Domain\RMS.Modules.Backup.Domain.csproj" />
+    <ProjectReference Include="..\Application\RMS.Modules.Backup.Application.csproj" />
+  </ItemGroup>
+
+</Project>

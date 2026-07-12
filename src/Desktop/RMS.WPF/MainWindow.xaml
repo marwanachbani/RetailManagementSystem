@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:RMS.WPF.Views"
         xmlns:viewModels="clr-namespace:RMS.WPF.ViewModels"
-        xmlns:settings="clr-namespace:RMS.WPF.Settings"
+             xmlns:settings="clr-namespace:RMS.WPF.Settings"
+             xmlns:backup="clr-namespace:RMS.WPF.Backup"
         Title="Retail Management System" 
         Height="700" 
         Width="1200"
@@ -45,6 +46,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:AuditLogViewModel}">
                 <views:AuditLogView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type backup:BackupAndRestoreViewModel}">
+                <backup:BackupAndRestoreView />
             </DataTemplate>
         </Grid.Resources>
 
@@ -109,13 +113,22 @@
                               Style="{StaticResource SidebarButtonStyle}"
                               Margin="0,0,0,4"/>
                        <Button Content="Audit Log"
-                              Command="{Binding NavigateAuditCommand}"
-                              Style="{StaticResource SidebarButtonStyle}"
-                              Margin="0,0,0,4"/>
-                       <Button Content="Logout"
-                            Command="{Binding LogoutCommand}"
-                            Style="{StaticResource SidebarButtonStyle}"
-                            Margin="0,0,0,4"/>
+                               Command="{Binding NavigateAuditCommand}"
+                               Style="{StaticResource SidebarButtonStyle}"
+                               Margin="0,0,0,4"/>
+                        <TextBlock Text="ADMINISTRATION"
+                                   Foreground="#6B7280"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Margin="4,8,0,4"/>
+                        <Button Content="Backup &amp; Restore"
+                               Command="{Binding NavigateBackupCommand}"
+                               Style="{StaticResource SidebarButtonStyle}"
+                               Margin="0,0,0,4"/>
+                        <Button Content="Logout"
+                             Command="{Binding LogoutCommand}"
+                             Style="{StaticResource SidebarButtonStyle}"
+                             Margin="0,0,0,4"/>
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Bottom" Margin="20,0,20,8">

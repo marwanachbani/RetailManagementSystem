@@ -1,0 +1,70 @@
+<UserControl x:Class="RMS.WPF.Backup.BackupSettingsSummaryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:backup="clr-namespace:RMS.WPF.Backup"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=backup:BackupSettingsSummaryViewModel}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="Settings Summary" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                <TextBlock Text="Active backup configuration, read from the Settings module." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Backup Folder" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding BackupFolder}" FontSize="13" VerticalAlignment="Center" TextWrapping="Wrap"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Automatic Backup" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding AutomaticBackup}" FontSize="13" VerticalAlignment="Center"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Content="Frequency" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Frequency}" FontSize="13" VerticalAlignment="Center"/>
+
+                <Label Grid.Row="3" Grid.Column="0" Content="Backup Time" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Time}" FontSize="13" VerticalAlignment="Center"/>
+
+                <Label Grid.Row="4" Grid.Column="0" Content="Maximum Backup Count" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding MaximumCount}" FontSize="13" VerticalAlignment="Center"/>
+
+                <Label Grid.Row="5" Grid.Column="0" Content="Compression" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Compress}" FontSize="13" VerticalAlignment="Center"/>
+
+                <Label Grid.Row="6" Grid.Column="0" Content="Verify Integrity" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding VerifyIntegrity}" FontSize="13" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
+                <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="12,0,0,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
