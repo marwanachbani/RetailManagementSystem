@@ -1,4 +1,6 @@
 using MediatR;
+using RMS.BuildingBlocks.Domain;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Exceptions;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Customers.Application.Contracts;
@@ -11,11 +13,13 @@ public sealed class UpdateCustomerHandler : IRequestHandler<UpdateCustomerComman
 {
     private readonly ICustomerReadStore _readStore;
     private readonly ICustomerWriteStore _writeStore;
+    private readonly IEventBus _eventBus;
 
-    public UpdateCustomerHandler(ICustomerReadStore readStore, ICustomerWriteStore writeStore)
+    public UpdateCustomerHandler(ICustomerReadStore readStore, ICustomerWriteStore writeStore, IEventBus eventBus)
     {
         _readStore = readStore;
         _writeStore = writeStore;
+        _eventBus = eventBus;
     }
 
     public async Task<Result> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
@@ -55,6 +59,7 @@ public sealed class UpdateCustomerHandler : IRequestHandler<UpdateCustomerComman
             customer.Update(request.FirstName, request.LastName, phone, email, address);
             await _writeStore.UpdateAsync(customer, cancellationToken);
             customer.ClearDomainEvents();
+            await _eventBus.PublishAsync(new CustomerUpdatedIntegrationEvent(customer.Id, customer.CustomerCode, customer.FullName), cancellationToken);
             return Result.Success();
         }
         catch (BusinessRuleValidationException ex)
@@ -63,3 +68,5 @@ public sealed class UpdateCustomerHandler : IRequestHandler<UpdateCustomerComman
         }
     }
 }
+
+public sealed record CustomerUpdatedIntegrationEvent(Guid CustomerId, string CustomerCode, string FullName) : DomainEvent, IIntegrationEvent;

@@ -43,6 +43,9 @@
             <DataTemplate DataType="{x:Type settings:SettingsViewModel}">
                 <settings:SettingsView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:AuditLogViewModel}">
+                <views:AuditLogView />
+            </DataTemplate>
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -101,11 +104,15 @@
                              Command="{Binding NavigateReportsCommand}"
                              Style="{StaticResource SidebarButtonStyle}"
                              Margin="0,0,0,4"/>
-                     <Button Content="Settings"
-                             Command="{Binding NavigateSettingsCommand}"
-                             Style="{StaticResource SidebarButtonStyle}"
-                             Margin="0,0,0,4"/>
-                      <Button Content="Logout"
+                      <Button Content="Settings"
+                              Command="{Binding NavigateSettingsCommand}"
+                              Style="{StaticResource SidebarButtonStyle}"
+                              Margin="0,0,0,4"/>
+                       <Button Content="Audit Log"
+                              Command="{Binding NavigateAuditCommand}"
+                              Style="{StaticResource SidebarButtonStyle}"
+                              Margin="0,0,0,4"/>
+                       <Button Content="Logout"
                             Command="{Binding LogoutCommand}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Margin="0,0,0,4"/>

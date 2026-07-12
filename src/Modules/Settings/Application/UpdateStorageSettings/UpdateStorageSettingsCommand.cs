@@ -1,6 +1,8 @@
 using MediatR;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Settings.Application.Contracts;
+using RMS.Modules.Settings.Application.IntegrationEvents;
 using RMS.Modules.Settings.Application.Models;
 using RMS.Modules.Settings.Application.Services;
 using FluentValidation;
@@ -13,11 +15,13 @@ public sealed class UpdateStorageSettingsHandler : IRequestHandler<UpdateStorage
 {
     private readonly ISettingsWriteStore _writeStore;
     private readonly IFolderResolver _resolver;
+    private readonly IEventBus _eventBus;
 
-    public UpdateStorageSettingsHandler(ISettingsWriteStore writeStore, IFolderResolver resolver)
+    public UpdateStorageSettingsHandler(ISettingsWriteStore writeStore, IFolderResolver resolver, IEventBus eventBus)
     {
         _writeStore = writeStore;
         _resolver = resolver;
+        _eventBus = eventBus;
     }
 
     public async Task<Result> Handle(UpdateStorageSettingsCommand request, CancellationToken cancellationToken)
@@ -28,12 +32,14 @@ public sealed class UpdateStorageSettingsHandler : IRequestHandler<UpdateStorage
 
         await _writeStore.UpsertManyAsync(pairs, cancellationToken);
 
-        // Automatically create any missing folders so exports/reports/backups
-        // always have a valid destination.
         foreach (var folder in request.Folders)
         {
             if (!string.IsNullOrWhiteSpace(folder.Path))
+            {
+                var oldPath = _resolver.GetDefaultPath(folder.Key);
                 _resolver.EnsureExists(folder.Path);
+                await _eventBus.PublishAsync(new FolderChangedIntegrationEvent(folder.Key, oldPath, folder.Path), cancellationToken);
+            }
         }
 
         return Result.Success();

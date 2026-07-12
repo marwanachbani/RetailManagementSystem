@@ -1,6 +1,8 @@
 using MediatR;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Settings.Application.Contracts;
+using RMS.Modules.Settings.Application.IntegrationEvents;
 using RMS.Modules.Settings.Application.Models;
 using RMS.Modules.Settings.Application.Services;
 using RMS.Modules.Settings.Domain;
@@ -17,24 +19,28 @@ public sealed class ResetSettingsHandler : IRequestHandler<ResetSettingsCommand,
     private readonly ISettingsWriteStore _writeStore;
     private readonly ISettingsReadStore _readStore;
     private readonly IFolderResolver _resolver;
+    private readonly IEventBus _eventBus;
 
     public ResetSettingsHandler(
         ISettingsWriteStore writeStore,
         ISettingsReadStore readStore,
-        IFolderResolver resolver)
+        IFolderResolver resolver,
+        IEventBus eventBus)
     {
         _writeStore = writeStore;
         _readStore = readStore;
         _resolver = resolver;
+        _eventBus = eventBus;
     }
 
     public async Task<Result<SettingsModel>> Handle(ResetSettingsCommand request, CancellationToken cancellationToken)
     {
         await _writeStore.ResetToDefaultsAsync(cancellationToken);
 
-        // Re-create the default folder structure after a reset.
         foreach (var folder in SettingCatalog.FolderDefinitions)
             _resolver.EnsureExists(_resolver.GetDefaultPath(folder.FolderSubPath!));
+
+        await _eventBus.PublishAsync(new SettingsResetIntegrationEvent(), cancellationToken);
 
         var values = await _readStore.GetAllValuesAsync(cancellationToken);
         var model = SettingsModelMapper.ToModel(values, _resolver);

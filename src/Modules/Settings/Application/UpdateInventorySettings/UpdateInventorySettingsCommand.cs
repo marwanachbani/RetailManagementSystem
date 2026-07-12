@@ -1,6 +1,8 @@
 using MediatR;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Settings.Application.Contracts;
+using RMS.Modules.Settings.Application.IntegrationEvents;
 using RMS.Modules.Settings.Application.Models;
 using FluentValidation;
 
@@ -11,16 +13,19 @@ public sealed record UpdateInventorySettingsCommand(InventorySettingsModel Setti
 public sealed class UpdateInventorySettingsHandler : IRequestHandler<UpdateInventorySettingsCommand, Result>
 {
     private readonly ISettingsWriteStore _writeStore;
+    private readonly IEventBus _eventBus;
 
-    public UpdateInventorySettingsHandler(ISettingsWriteStore writeStore)
+    public UpdateInventorySettingsHandler(ISettingsWriteStore writeStore, IEventBus eventBus)
     {
         _writeStore = writeStore;
+        _eventBus = eventBus;
     }
 
     public async Task<Result> Handle(UpdateInventorySettingsCommand request, CancellationToken cancellationToken)
     {
         var pairs = SettingsModelMapper.InventoryPairs(request.Settings);
         await _writeStore.UpsertManyAsync(pairs, cancellationToken);
+        await _eventBus.PublishAsync(new SettingChangedIntegrationEvent("Inventory", null, request.Settings.DefaultLowStockThreshold.ToString()), cancellationToken);
         return Result.Success();
     }
 }

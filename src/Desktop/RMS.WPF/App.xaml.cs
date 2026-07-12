@@ -40,6 +40,8 @@ using RMS.Modules.Settings.Application;
 using RMS.Modules.Settings.Application.Services;
 using RMS.Modules.Settings.Domain;
 using RMS.Modules.Settings.Infrastructure;
+using RMS.Modules.Audit.Application;
+using RMS.Modules.Audit.Infrastructure;
 using RMS.WPF.ViewModels;
 using RMS.WPF.Settings;
 using RMS.WPF.Services;
@@ -249,6 +251,7 @@ public partial class App : Application
         services.AddRmsLogging(LogsDirectory);
 
         services.AddSingleton<ICurrentSessionService, CurrentSessionService>();
+        services.AddSingleton<ICurrentUserContext, CurrentUserContext>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IFolderBrowserService, FolderBrowserService>();
 
@@ -304,6 +307,11 @@ public partial class App : Application
         services.AddSettingsModule(ProgramDataDirectory);
         services.AddSettingsInfrastructure();
         services.AddSettingsMigrations(ConnectionString);
+
+        // Audit module — fully wired vertical slice.
+        services.AddAuditModule();
+        services.AddAuditInfrastructure();
+        services.AddAuditMigrations(ConnectionString);
 
         // Dashboard queries live in the WPF assembly — register MediatR handlers.
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(App).Assembly));
@@ -368,6 +376,11 @@ public partial class App : Application
         services.AddTransient<PurchaseHistoryWindow>();
 
         services.AddTransient<ReportsView>();
+
+        // Audit module — WPF shell.
+        services.AddTransient<AuditLogViewModel>();
+        services.AddTransient<AuditLogView>();
+        services.AddTransient<AuditLogDetailsWindow>();
 
         // Settings module — WPF shell.
         services.AddTransient<SettingsViewModel>();

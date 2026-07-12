@@ -4,6 +4,7 @@ using FluentMigrator.Runner;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using RMS.BuildingBlocks.Contracts;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Persistence;
 using RMS.Modules.Settings.Application;
 using RMS.Modules.Settings.Application.Contracts;
@@ -39,6 +40,7 @@ public partial class SettingsTestDatabaseFixture : IDisposable
 
         var services = new ServiceCollection();
         services.AddSingleton<IDbConnectionFactory>(new TestConnectionFactory(connectionString));
+        services.AddSingleton<IEventBus, TestEventBus>();
         services.AddSettingsModule(_baseDirectory);
         services.AddSettingsInfrastructure();
         services.AddFluentMigratorCore()
@@ -68,12 +70,25 @@ public partial class SettingsTestDatabaseFixture : IDisposable
     private sealed class TestConnectionFactory : IDbConnectionFactory
     {
         private readonly string _connectionString;
-        public TestConnectionFactory(string connectionString) => _connectionString = connectionString;
+
+        public TestConnectionFactory(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         public IDbConnection CreateConnection()
         {
             var connection = new SqliteConnection(_connectionString);
             connection.Open();
             return connection;
+        }
+    }
+
+    private sealed class TestEventBus : IEventBus
+    {
+        public Task PublishAsync<TEvent>(TEvent integrationEvent, CancellationToken cancellationToken = default) where TEvent : IIntegrationEvent
+        {
+            return Task.CompletedTask;
         }
     }
 }

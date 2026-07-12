@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using RMS.BuildingBlocks.EventBus;
 using RMS.Modules.Reporting.Application.Contracts;
+using RMS.Modules.Reporting.Application.IntegrationEvents;
 using RMS.WPF.Commands;
 using RMS.WPF.Services;
 
@@ -49,8 +51,8 @@ public sealed class SalesReportViewModel : ReportViewModelBase
         set { _sortDescending = value; OnPropertyChanged(); }
     }
 
-    public SalesReportViewModel(IReportingReadStore readStore, IDialogService dialogService)
-        : base(readStore, dialogService)
+    public SalesReportViewModel(IReportingReadStore readStore, IDialogService dialogService, IEventBus eventBus)
+        : base(readStore, dialogService, eventBus)
     {
     }
 
@@ -68,6 +70,7 @@ public sealed class SalesReportViewModel : ReportViewModelBase
             foreach (var item in result.Items)
                 _items.Add(item);
 
+            await EventBus.PublishAsync(new ReportGeneratedIntegrationEvent("Sales", "View"), default);
             StatusMessage = $"Loaded {result.TotalCount} sales. Revenue: {result.GrandTotalRevenue:C}";
         }
         catch (Exception ex)

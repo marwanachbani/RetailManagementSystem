@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using RMS.BuildingBlocks.EventBus;
 using RMS.Modules.Reporting.Application.Contracts;
+using RMS.Modules.Reporting.Application.IntegrationEvents;
 using RMS.WPF.Commands;
 using RMS.WPF.Services;
 
@@ -10,6 +12,7 @@ public abstract class ReportViewModelBase : ViewModelBase
 {
     protected readonly IReportingReadStore ReadStore;
     protected readonly IDialogService DialogService;
+    protected readonly IEventBus EventBus;
 
     private bool _isLoading;
     private string? _statusMessage;
@@ -36,10 +39,11 @@ public abstract class ReportViewModelBase : ViewModelBase
     public ICommand ExportCsvCommand { get; }
     public ICommand PrintCommand { get; }
 
-    protected ReportViewModelBase(IReportingReadStore readStore, IDialogService dialogService)
+    protected ReportViewModelBase(IReportingReadStore readStore, IDialogService dialogService, IEventBus eventBus)
     {
         ReadStore = readStore;
         DialogService = dialogService;
+        EventBus = eventBus;
 
         RefreshCommand = new RelayCommand(_ => _ = LoadAsync());
         ExportPdfCommand = new RelayCommand(_ => _ = ExportAsync("PDF"));
@@ -62,6 +66,7 @@ public abstract class ReportViewModelBase : ViewModelBase
         try
         {
             await Task.CompletedTask;
+            await EventBus.PublishAsync(new ReportGeneratedIntegrationEvent(GetType().Name, format), default);
             DialogService.ShowInfo($"Exported {Items.Count} rows as {format}.", "Export");
             StatusMessage = $"Exported {Items.Count} rows as {format}.";
         }

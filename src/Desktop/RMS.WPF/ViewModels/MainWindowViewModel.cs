@@ -1,12 +1,18 @@
 using System.Windows;
 using System.Windows.Input;
+using RMS.BuildingBlocks.EventBus;
+using RMS.BuildingBlocks.Persistence;
+using RMS.Modules.Identity.Application.IntegrationEvents;
 using RMS.WPF.Commands;
+using RMS.WPF.Services;
 using RMS.WPF.Settings;
 
 namespace RMS.WPF.ViewModels;
 
 public sealed class MainWindowViewModel : ViewModelBase
 {
+    private readonly IEventBus _eventBus;
+    private readonly ICurrentSessionService _currentSessionService;
     private object? _currentViewModel;
     private string _currentViewTitle = "Dashboard";
     private string _currentBreadcrumb = "Home / Dashboard";
@@ -22,8 +28,13 @@ public sealed class MainWindowViewModel : ViewModelBase
         SupplierListViewModel supplierListViewModel,
         PurchaseOrdersViewModel purchaseOrdersViewModel,
         ReportsViewModel reportsViewModel,
-        SettingsViewModel settingsViewModel)
+        SettingsViewModel settingsViewModel,
+        AuditLogViewModel auditLogViewModel,
+        IEventBus eventBus,
+        ICurrentSessionService currentSessionService)
     {
+        _eventBus = eventBus;
+        _currentSessionService = currentSessionService;
         DashboardViewModel = dashboardViewModel;
         ProductListViewModel = productListViewModel;
         InventoryListViewModel = inventoryListViewModel;
@@ -33,6 +44,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         PurchaseOrdersViewModel = purchaseOrdersViewModel;
         ReportsViewModel = reportsViewModel;
         SettingsViewModel = settingsViewModel;
+        AuditLogViewModel = auditLogViewModel;
         NavigateDashboardCommand = new RelayCommand(_ => ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard"));
         NavigateProductsCommand = new RelayCommand(_ => ShowView(ProductListViewModel, "Products", "Home / Products"));
         NavigateInventoryCommand = new RelayCommand(_ => ShowView(InventoryListViewModel, "Inventory", "Home / Inventory"));
@@ -42,6 +54,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         NavigatePurchasingCommand = new RelayCommand(_ => ShowView(PurchaseOrdersViewModel, "Purchasing", "Home / Purchasing"));
         NavigateReportsCommand = new RelayCommand(_ => ShowView(ReportsViewModel, "Reports", "Home / Reports"));
         NavigateSettingsCommand = new RelayCommand(_ => ShowView(SettingsViewModel, "Settings", "Home / Settings"));
+        NavigateAuditCommand = new RelayCommand(_ => ShowView(AuditLogViewModel, "Audit Log", "Home / Audit Log"));
         LogoutCommand = new RelayCommand(_ => Logout());
 
         WireDashboardQuickActions(dashboardViewModel);
@@ -58,6 +71,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public PurchaseOrdersViewModel PurchaseOrdersViewModel { get; }
     public ReportsViewModel ReportsViewModel { get; }
     public SettingsViewModel SettingsViewModel { get; }
+    public AuditLogViewModel AuditLogViewModel { get; }
 
     public object? CurrentViewModel
     {
@@ -118,6 +132,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ICommand NavigatePurchasingCommand { get; }
     public ICommand NavigateReportsCommand { get; }
     public ICommand NavigateSettingsCommand { get; }
+    public ICommand NavigateAuditCommand { get; }
     public ICommand LogoutCommand { get; }
 
     public event EventHandler? RequestLogout;
@@ -134,6 +149,10 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         var result = MessageBox.Show("Do you want to log out and return to the sign-in screen?", "Log out", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (result != MessageBoxResult.Yes) return;
+
+        _eventBus.PublishAsync(new LogoutSucceededIntegrationEvent(
+            _currentSessionService.UserId,
+            _currentSessionService.UserName), default).GetAwaiter().GetResult();
 
         RequestLogout?.Invoke(this, EventArgs.Empty);
     }

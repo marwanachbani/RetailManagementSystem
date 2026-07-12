@@ -1,4 +1,6 @@
 using MediatR;
+using RMS.BuildingBlocks.Domain;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Exceptions;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Customers.Application.Contracts;
@@ -11,11 +13,13 @@ public sealed class DeactivateCustomerHandler : IRequestHandler<DeactivateCustom
 {
     private readonly ICustomerReadStore _readStore;
     private readonly ICustomerWriteStore _writeStore;
+    private readonly IEventBus _eventBus;
 
-    public DeactivateCustomerHandler(ICustomerReadStore readStore, ICustomerWriteStore writeStore)
+    public DeactivateCustomerHandler(ICustomerReadStore readStore, ICustomerWriteStore writeStore, IEventBus eventBus)
     {
         _readStore = readStore;
         _writeStore = writeStore;
+        _eventBus = eventBus;
     }
 
     public async Task<Result> Handle(DeactivateCustomerCommand request, CancellationToken cancellationToken)
@@ -30,6 +34,9 @@ public sealed class DeactivateCustomerHandler : IRequestHandler<DeactivateCustom
         {
             customer.Deactivate();
             await _writeStore.UpdateAsync(customer, cancellationToken);
+            await _eventBus.PublishAsync(
+                new CustomerDeactivatedIntegrationEvent(customer.Id, customer.CustomerCode),
+                cancellationToken);
             customer.ClearDomainEvents();
             return Result.Success();
         }
@@ -51,3 +58,5 @@ public sealed class DeactivateCustomerHandler : IRequestHandler<DeactivateCustom
             Enum.Parse<CustomerStatus>(model.Status), model.CreatedAt, model.UpdatedAt);
     }
 }
+
+public sealed record CustomerDeactivatedIntegrationEvent(Guid CustomerId, string CustomerCode) : DomainEvent, IIntegrationEvent;

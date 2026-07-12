@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using RMS.BuildingBlocks.EventBus;
 using RMS.Modules.Reporting.Application.Contracts;
+using RMS.Modules.Reporting.Application.IntegrationEvents;
 using RMS.WPF.Services;
 
 namespace RMS.WPF.ViewModels;
@@ -26,8 +28,8 @@ public sealed class CustomerReportViewModel : ReportViewModelBase
         set { _includeInactive = value; OnPropertyChanged(); }
     }
 
-    public CustomerReportViewModel(IReportingReadStore readStore, IDialogService dialogService)
-        : base(readStore, dialogService)
+    public CustomerReportViewModel(IReportingReadStore readStore, IDialogService dialogService, IEventBus eventBus)
+        : base(readStore, dialogService, eventBus)
     {
     }
 
@@ -43,6 +45,8 @@ public sealed class CustomerReportViewModel : ReportViewModelBase
             foreach (var item in result.Items)
                 _items.Add(item);
             StatusMessage = $"Loaded {result.TotalCount} customers";
+
+            await EventBus.PublishAsync(new ReportGeneratedIntegrationEvent("Customer", "View"), default);
         }
         catch (Exception ex)
         {

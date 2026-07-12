@@ -1,6 +1,8 @@
 using MediatR;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Settings.Application.Contracts;
+using RMS.Modules.Settings.Application.IntegrationEvents;
 using RMS.Modules.Settings.Application.Models;
 using FluentValidation;
 
@@ -11,16 +13,19 @@ public sealed record UpdateReceiptSettingsCommand(ReceiptSettingsModel Settings)
 public sealed class UpdateReceiptSettingsHandler : IRequestHandler<UpdateReceiptSettingsCommand, Result>
 {
     private readonly ISettingsWriteStore _writeStore;
+    private readonly IEventBus _eventBus;
 
-    public UpdateReceiptSettingsHandler(ISettingsWriteStore writeStore)
+    public UpdateReceiptSettingsHandler(ISettingsWriteStore writeStore, IEventBus eventBus)
     {
         _writeStore = writeStore;
+        _eventBus = eventBus;
     }
 
     public async Task<Result> Handle(UpdateReceiptSettingsCommand request, CancellationToken cancellationToken)
     {
         var pairs = SettingsModelMapper.ReceiptPairs(request.Settings);
         await _writeStore.UpsertManyAsync(pairs, cancellationToken);
+        await _eventBus.PublishAsync(new SettingChangedIntegrationEvent("Receipt", null, request.Settings.PaperWidth.ToString()), cancellationToken);
         return Result.Success();
     }
 }

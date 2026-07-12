@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>RMS.Modules.Audit.Application</RootNamespace>
+    <AssemblyName>RMS.Modules.Audit.Application</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\RMS.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\Domain\RMS.Modules.Audit.Domain.csproj" />
+    <ProjectReference Include="..\..\Products\Application\RMS.Modules.Products.Application.csproj" />
+    <ProjectReference Include="..\..\Sales\Application\RMS.Modules.Sales.Application.csproj" />
+    <ProjectReference Include="..\..\Inventory\Application\RMS.Modules.Inventory.Application.csproj" />
+    <ProjectReference Include="..\..\Purchasing\Application\RMS.Modules.Purchasing.Application.csproj" />
+    <ProjectReference Include="..\..\Suppliers\Application\RMS.Modules.Suppliers.Application.csproj" />
+    <ProjectReference Include="..\..\Customers\Application\RMS.Modules.Customers.Application.csproj" />
+    <ProjectReference Include="..\..\Identity\Application\RMS.Modules.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\Settings\Application\RMS.Modules.Settings.Application.csproj" />
+    <ProjectReference Include="..\..\Reporting\Application\RMS.Modules.Reporting.Application.csproj" />
+  </ItemGroup>
+
+</Project>

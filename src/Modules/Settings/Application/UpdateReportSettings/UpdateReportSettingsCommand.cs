@@ -1,6 +1,8 @@
 using MediatR;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Settings.Application.Contracts;
+using RMS.Modules.Settings.Application.IntegrationEvents;
 using RMS.Modules.Settings.Application.Models;
 using RMS.Modules.Settings.Application.Services;
 using FluentValidation;
@@ -13,11 +15,13 @@ public sealed class UpdateReportSettingsHandler : IRequestHandler<UpdateReportSe
 {
     private readonly ISettingsWriteStore _writeStore;
     private readonly IFolderResolver _resolver;
+    private readonly IEventBus _eventBus;
 
-    public UpdateReportSettingsHandler(ISettingsWriteStore writeStore, IFolderResolver resolver)
+    public UpdateReportSettingsHandler(ISettingsWriteStore writeStore, IFolderResolver resolver, IEventBus eventBus)
     {
         _writeStore = writeStore;
         _resolver = resolver;
+        _eventBus = eventBus;
     }
 
     public async Task<Result> Handle(UpdateReportSettingsCommand request, CancellationToken cancellationToken)
@@ -25,6 +29,7 @@ public sealed class UpdateReportSettingsHandler : IRequestHandler<UpdateReportSe
         var pairs = SettingsModelMapper.ReportPairs(request.Settings, _resolver);
         await _writeStore.UpsertManyAsync(pairs, cancellationToken);
         _resolver.EnsureExists(request.Settings.DefaultReportFolder);
+        await _eventBus.PublishAsync(new SettingChangedIntegrationEvent("Report", null, request.Settings.FileNamePattern), cancellationToken);
         return Result.Success();
     }
 }

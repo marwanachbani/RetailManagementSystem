@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using RMS.BuildingBlocks.EventBus;
 using RMS.Modules.Reporting.Application.Contracts;
+using RMS.Modules.Reporting.Application.IntegrationEvents;
 using RMS.WPF.Services;
 
 namespace RMS.WPF.ViewModels;
@@ -41,8 +43,8 @@ public sealed class InventoryReportViewModel : ReportViewModelBase
 
     public ObservableCollection<InventoryReportItem> TypedInventoryItems => new(_currentInventoryItems.OfType<InventoryReportItem>());
 
-    public InventoryReportViewModel(IReportingReadStore readStore, IDialogService dialogService)
-        : base(readStore, dialogService)
+    public InventoryReportViewModel(IReportingReadStore readStore, IDialogService dialogService, IEventBus eventBus)
+        : base(readStore, dialogService, eventBus)
     {
     }
 
@@ -69,6 +71,8 @@ public sealed class InventoryReportViewModel : ReportViewModelBase
                     _stockMovementItems.Add(item);
                 StatusMessage = $"Loaded {result.TotalCount} transactions";
             }
+
+            await EventBus.PublishAsync(new ReportGeneratedIntegrationEvent("Inventory", "View"), default);
         }
         catch (Exception ex)
         {

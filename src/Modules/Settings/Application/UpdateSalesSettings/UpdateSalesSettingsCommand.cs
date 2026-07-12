@@ -1,6 +1,8 @@
 using MediatR;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
 using RMS.Modules.Settings.Application.Contracts;
+using RMS.Modules.Settings.Application.IntegrationEvents;
 using RMS.Modules.Settings.Application.Models;
 using FluentValidation;
 
@@ -11,16 +13,19 @@ public sealed record UpdateSalesSettingsCommand(SalesSettingsModel Settings) : I
 public sealed class UpdateSalesSettingsHandler : IRequestHandler<UpdateSalesSettingsCommand, Result>
 {
     private readonly ISettingsWriteStore _writeStore;
+    private readonly IEventBus _eventBus;
 
-    public UpdateSalesSettingsHandler(ISettingsWriteStore writeStore)
+    public UpdateSalesSettingsHandler(ISettingsWriteStore writeStore, IEventBus eventBus)
     {
         _writeStore = writeStore;
+        _eventBus = eventBus;
     }
 
     public async Task<Result> Handle(UpdateSalesSettingsCommand request, CancellationToken cancellationToken)
     {
         var pairs = SettingsModelMapper.SalesPairs(request.Settings);
         await _writeStore.UpsertManyAsync(pairs, cancellationToken);
+        await _eventBus.PublishAsync(new SettingChangedIntegrationEvent("Sales", null, request.Settings.DefaultTaxRate.ToString()), cancellationToken);
         return Result.Success();
     }
 }

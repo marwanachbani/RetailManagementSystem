@@ -8,7 +8,7 @@ namespace RMS.ArchitectureTests;
 public class ModuleIsolationTests
 {
     private static readonly string[] ModuleNames =
-        { "Sales", "Inventory", "Products", "Customers", "Suppliers", "Identity", "Reporting", "Purchasing", "Settings" };
+        { "Sales", "Inventory", "Products", "Customers", "Suppliers", "Identity", "Reporting", "Purchasing", "Settings", "Audit" };
 
     public static IEnumerable<object[]> ModulePairs()
     {
@@ -46,6 +46,7 @@ public class ModuleIsolationTests
     [InlineData("Identity")]
     [InlineData("Reporting")]
     [InlineData("Settings")]
+    [InlineData("Audit")]
     public void Domain_Should_Not_Depend_On_Infrastructure_Or_Application(string moduleName)
     {
         var assembly = LoadDomainAssembly(moduleName);

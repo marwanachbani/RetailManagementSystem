@@ -1,0 +1,64 @@
+<Window x:Class="RMS.WPF.Views.AuditLogDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Audit Log Details" 
+        Height="400" 
+        Width="600"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}"
+        Style="{StaticResource ModernWindowStyle}">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Audit Log Entry Details" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+        <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}">
+            <StackPanel Margin="16">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Margin" Value="0,0,0,8"/>
+                    </Style>
+                    <Style TargetType="TextBlock" x:Key="ValueStyle">
+                        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                        <Setter Property="FontWeight" Value="Medium"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <TextBlock Text="Timestamp:"/>
+                <TextBlock Text="{Binding Entry.Timestamp, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="User:"/>
+                <TextBlock Text="{Binding Entry.UserName}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Module:"/>
+                <TextBlock Text="{Binding Entry.Module}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Action:"/>
+                <TextBlock Text="{Binding Entry.Action}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Entity:"/>
+                <TextBlock Text="{Binding Entry.Entity}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Entity Id:"/>
+                <TextBlock Text="{Binding Entry.EntityId}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Old Value:"/>
+                <TextBlock Text="{Binding Entry.OldValue}" Style="{StaticResource ValueStyle}" TextWrapping="Wrap"/>
+
+                <TextBlock Text="New Value:"/>
+                <TextBlock Text="{Binding Entry.NewValue}" Style="{StaticResource ValueStyle}" TextWrapping="Wrap"/>
+
+                <TextBlock Text="Machine Name:"/>
+                <TextBlock Text="{Binding Entry.MachineName}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Application Version:"/>
+                <TextBlock Text="{Binding Entry.ApplicationVersion}" Style="{StaticResource ValueStyle}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

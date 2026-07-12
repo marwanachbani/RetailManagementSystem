@@ -46,6 +46,10 @@
     <ProjectReference Include="..\..\src\Modules\Settings\Domain\RMS.Modules.Settings.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Settings\Application\RMS.Modules.Settings.Application.csproj" />
     <ProjectReference Include="..\..\src\Modules\Settings\Infrastructure\RMS.Modules.Settings.Infrastructure.csproj" />
+
+    <ProjectReference Include="..\..\src\Modules\Audit\Domain\RMS.Modules.Audit.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Audit\Application\RMS.Modules.Audit.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Audit\Infrastructure\RMS.Modules.Audit.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

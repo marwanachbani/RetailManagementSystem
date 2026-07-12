@@ -26,6 +26,8 @@
     <ProjectReference Include="..\..\src\Modules\Suppliers\Domain\RMS.Modules.Suppliers.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Settings\Domain\RMS.Modules.Settings.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Settings\Application\RMS.Modules.Settings.Application.csproj" />
+
+    <ProjectReference Include="..\..\src\Modules\Audit\Domain\RMS.Modules.Audit.Domain.csproj" />
   </ItemGroup>
 
 </Project>

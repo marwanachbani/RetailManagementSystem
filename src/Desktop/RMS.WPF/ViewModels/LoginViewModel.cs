@@ -2,7 +2,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using MediatR;
+using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Results;
+using RMS.Modules.Identity.Application.IntegrationEvents;
 using RMS.Modules.Identity.Application.AuthenticateUser;
 using RMS.WPF.Commands;
 
@@ -11,6 +13,7 @@ namespace RMS.WPF.ViewModels;
 public sealed class LoginViewModel : INotifyPropertyChanged
 {
     private readonly IMediator _mediator;
+    private readonly IEventBus _eventBus;
     private string _userName = string.Empty;
     private string _password = string.Empty;
     private string? _errorMessage;
@@ -18,9 +21,10 @@ public sealed class LoginViewModel : INotifyPropertyChanged
     private bool _showPassword;
     private bool _rememberMe;
 
-    public LoginViewModel(IMediator mediator)
+    public LoginViewModel(IMediator mediator, IEventBus eventBus)
     {
         _mediator = mediator;
+        _eventBus = eventBus;
         LoginCommand = new RelayCommand(_ => _ = LoginAsync(), _ => !IsLoading && !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password));
     }
 
@@ -104,9 +108,11 @@ public sealed class LoginViewModel : INotifyPropertyChanged
             if (result.IsFailure)
             {
                 ErrorMessage = result.Error ?? "Authentication failed.";
+                await _eventBus.PublishAsync(new LoginFailedIntegrationEvent(UserName.Trim(), result.Error ?? "Authentication failed."), default);
                 return;
             }
 
+            await _eventBus.PublishAsync(new LoginSucceededIntegrationEvent(result.Value.UserId, result.Value.UserName), default);
             LoginSucceeded?.Invoke(this, result.Value);
         }
         catch (Exception ex)
