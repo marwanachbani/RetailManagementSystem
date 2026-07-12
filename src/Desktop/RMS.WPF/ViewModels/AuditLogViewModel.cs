@@ -26,13 +26,18 @@ public sealed class AuditLogViewModel : ViewModelBase
     private DateTime _fromDate = DateTime.Today.AddDays(-30);
     private DateTime _toDate = DateTime.Today;
     private string? _searchTerm;
-    private string? _filterModule;
-    private string? _filterAction;
+    private string? _filterModule = "All";
+    private string? _filterAction = "All";
     private string? _filterUserId;
     private string? _statusMessage;
     private AuditLogReadModel? _selectedEntry;
+    private int _pageNumber = 1;
+    private int _totalPages = 1;
+    private bool _isLoading;
 
     public ObservableCollection<AuditLogReadModel> AuditLogs { get; } = new();
+    public ObservableCollection<string> Modules { get; } = new();
+    public ObservableCollection<string> Actions { get; } = new();
 
     public DateTime FromDate
     {
@@ -55,19 +60,19 @@ public sealed class AuditLogViewModel : ViewModelBase
     public string? FilterModule
     {
         get => _filterModule;
-        set { _filterModule = value; OnPropertyChanged(); }
+        set { _filterModule = value; OnPropertyChanged(); PageNumber = 1; Refresh(); }
     }
 
     public string? FilterAction
     {
         get => _filterAction;
-        set { _filterAction = value; OnPropertyChanged(); }
+        set { _filterAction = value; OnPropertyChanged(); PageNumber = 1; Refresh(); }
     }
 
     public string? FilterUserId
     {
         get => _filterUserId;
-        set { _filterUserId = value; OnPropertyChanged(); }
+        set { _filterUserId = value; OnPropertyChanged(); PageNumber = 1; Refresh(); }
     }
 
     public string? StatusMessage
@@ -82,11 +87,43 @@ public sealed class AuditLogViewModel : ViewModelBase
         set { _selectedEntry = value; OnPropertyChanged(); }
     }
 
+    public int PageNumber
+    {
+        get => _pageNumber;
+        private set
+        {
+            _pageNumber = value;
+            OnPropertyChanged();
+            CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public int TotalPages
+    {
+        get => _totalPages;
+        private set
+        {
+            _totalPages = value;
+            OnPropertyChanged();
+            CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public int PageSize { get; } = 25;
+
+    public bool IsLoading
+    {
+        get => _isLoading;
+        private set { _isLoading = value; OnPropertyChanged(); }
+    }
+
     public ICommand RefreshCommand { get; }
     public ICommand ExportPdfCommand { get; }
     public ICommand ExportCsvCommand { get; }
     public ICommand PrintCommand { get; }
     public ICommand ShowDetailsCommand { get; }
+    public ICommand NextPageCommand { get; }
+    public ICommand PreviousPageCommand { get; }
 
     public AuditLogViewModel(IMediator mediator, IDialogService dialogService, IFolderBrowserService folderBrowserService)
     {
@@ -99,24 +136,65 @@ public sealed class AuditLogViewModel : ViewModelBase
         ExportCsvCommand = new RelayCommand(_ => _ = ExportCsvAsync());
         PrintCommand = new RelayCommand(_ => _ = PrintAsync());
         ShowDetailsCommand = new RelayCommand(_ => ShowDetails());
+        NextPageCommand = new RelayCommand(_ => NextPage(), _ => PageNumber < TotalPages);
+        PreviousPageCommand = new RelayCommand(_ => PreviousPage(), _ => PageNumber > 1);
 
         Refresh();
     }
 
     private async void Refresh()
     {
-        var result = await _mediator.Send(new GetAuditLogsQuery(1, 100, FromDate, ToDate, FilterUserId, FilterModule, FilterAction, SearchTerm));
-        if (result.IsFailure)
+        IsLoading = true;
+        try
         {
-            StatusMessage = result.Error;
-            return;
+            var module = string.IsNullOrEmpty(FilterModule) || FilterModule == "All" ? null : FilterModule;
+            var action = string.IsNullOrEmpty(FilterAction) || FilterAction == "All" ? null : FilterAction;
+
+            var result = await _mediator.Send(new GetAuditLogsQuery(PageNumber, PageSize, FromDate, ToDate, FilterUserId, module, action, SearchTerm));
+            if (result.IsFailure)
+            {
+                StatusMessage = result.Error;
+                return;
+            }
+
+            AuditLogs.Clear();
+            foreach (var entry in result.Value.Items)
+                AuditLogs.Add(entry);
+
+            TotalPages = result.Value.TotalPages;
+
+            foreach (var entry in result.Value.Items)
+            {
+                if (!Modules.Contains(entry.Module))
+                    Modules.Add(entry.Module);
+                if (!Actions.Contains(entry.Action))
+                    Actions.Add(entry.Action);
+            }
+
+            StatusMessage = $"{result.Value.TotalCount} audit entries found";
         }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 
-        AuditLogs.Clear();
-        foreach (var entry in result.Value.Items)
-            AuditLogs.Add(entry);
+    private void NextPage()
+    {
+        if (PageNumber < TotalPages)
+        {
+            PageNumber++;
+            Refresh();
+        }
+    }
 
-        StatusMessage = $"{result.Value.TotalCount} audit entries found";
+    private void PreviousPage()
+    {
+        if (PageNumber > 1)
+        {
+            PageNumber--;
+            Refresh();
+        }
     }
 
     private void ShowDetails()

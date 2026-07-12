@@ -9,34 +9,72 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
-                <DatePicker SelectedDate="{Binding FromDate}" Margin="0,0,12,0" Width="140"/>
-                <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
-                <DatePicker SelectedDate="{Binding ToDate}" Margin="0,0,12,0" Width="140"/>
-                <TextBox Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" Width="200" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,12,0"/>
-                <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
-            </StackPanel>
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left">
+                    <TextBlock Text="Audit Log" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="Track system changes and user activity" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right">
+                    <Button Content="Export PDF" Command="{Binding ExportPdfCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+                    <Button Content="Export CSV" Command="{Binding ExportCsvCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+                    <Button Content="Print" Command="{Binding PrintCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
+                </StackPanel>
+            </DockPanel>
         </Border>
 
         <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Module:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
-                <ComboBox ItemsSource="{Binding Modules}" SelectedItem="{Binding FilterModule}" Width="150" Style="{StaticResource ModernComboBoxStyle}" Margin="0,0,12,0"/>
-                <TextBlock Text="Action:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
-                <ComboBox ItemsSource="{Binding Actions}" SelectedItem="{Binding FilterAction}" Width="150" Style="{StaticResource ModernComboBoxStyle}" Margin="0,0,12,0"/>
+                <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <DatePicker SelectedDate="{Binding FromDate}" Margin="0,0,12,0" Width="130" Style="{StaticResource ModernDatePickerStyle}"/>
+                <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <DatePicker SelectedDate="{Binding ToDate}" Margin="0,0,12,0" Width="130" Style="{StaticResource ModernDatePickerStyle}"/>
+                <TextBox Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" Width="180" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,12,0" VerticalAlignment="Center"/>
                 <TextBlock Text="User:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
-                <TextBox Text="{Binding FilterUserId, UpdateSourceTrigger=PropertyChanged}" Width="180" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,12,0"/>
+                <TextBox Text="{Binding FilterUserId, UpdateSourceTrigger=PropertyChanged}" Width="150" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,12,0" VerticalAlignment="Center"/>
             </StackPanel>
         </Border>
 
-        <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12" FontSize="12"/>
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Module:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <ListBox ItemsSource="{Binding Modules}" SelectedItem="{Binding FilterModule}" Width="160" Height="72" Margin="0,0,12,0" VerticalAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource BorderDarkBrush}" Background="{StaticResource SurfaceBrush}" Padding="4">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}" Padding="2"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock Text="Action:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <ListBox ItemsSource="{Binding Actions}" SelectedItem="{Binding FilterAction}" Width="160" Height="72" Margin="0,0,12,0" VerticalAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource BorderDarkBrush}" Background="{StaticResource SurfaceBrush}" Padding="4">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}" Padding="2"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Border>
 
-        <Border Grid.Row="3" Style="{StaticResource CardBorderStyle}" Padding="0">
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12" FontSize="12"/>
+
+        <ProgressBar Grid.Row="4"
+                      IsIndeterminate="True"
+                      Height="4"
+                      VerticalAlignment="Top"
+                      Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Margin="0,0,0,4"
+                      Foreground="{StaticResource PrimaryBrush}"
+                      Background="Transparent"/>
+
+        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Padding="0">
             <DataGrid ItemsSource="{Binding AuditLogs}"
                       SelectedItem="{Binding SelectedEntry}"
                       AutoGenerateColumns="False"
@@ -60,6 +98,16 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
+        </Border>
+
+        <Border Grid.Row="5" Style="{StaticResource CardBorderStyle}" Margin="0,12,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Prev" Command="{Binding PreviousPageCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+                <TextBlock Text="{Binding PageNumber}" VerticalAlignment="Center" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"/>
+                <TextBlock Text="/" VerticalAlignment="Center" FontSize="13" Margin="4,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center" FontSize="13" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <Button Content="Next" Command="{Binding NextPageCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>
