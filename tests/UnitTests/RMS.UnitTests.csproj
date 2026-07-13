@@ -34,6 +34,10 @@
 
     <ProjectReference Include="..\..\src\Modules\Notifications\Domain\RMS.Modules.Notifications.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Notifications\Application\RMS.Modules.Notifications.Application.csproj" />
+
+    <ProjectReference Include="..\..\src\Modules\Printing\Domain\RMS.Modules.Printing.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Printing\Application\RMS.Modules.Printing.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Printing\Infrastructure\RMS.Modules.Printing.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

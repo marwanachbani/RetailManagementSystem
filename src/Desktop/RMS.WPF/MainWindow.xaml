@@ -41,9 +41,12 @@
             <DataTemplate DataType="{x:Type viewModels:ReportsViewModel}">
                 <views:ReportsView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type settings:SettingsViewModel}">
-                <settings:SettingsView />
-            </DataTemplate>
+             <DataTemplate DataType="{x:Type settings:SettingsViewModel}">
+                 <settings:SettingsView />
+             </DataTemplate>
+             <DataTemplate DataType="{x:Type viewModels:PrintingToolsViewModel}">
+                 <views:PrintingToolsView />
+             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:AuditLogViewModel}">
                 <views:AuditLogView />
             </DataTemplate>
@@ -108,10 +111,14 @@
                              Command="{Binding NavigateReportsCommand}"
                              Style="{StaticResource SidebarButtonStyle}"
                              Margin="0,0,0,4"/>
-                      <Button Content="Settings"
-                              Command="{Binding NavigateSettingsCommand}"
-                              Style="{StaticResource SidebarButtonStyle}"
-                              Margin="0,0,0,4"/>
+                        <Button Content="Settings"
+                                Command="{Binding NavigateSettingsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}"
+                                Margin="0,0,0,4"/>
+                         <Button Content="Printing"
+                                 Command="{Binding NavigatePrintingCommand}"
+                                 Style="{StaticResource SidebarButtonStyle}"
+                                 Margin="0,0,0,4"/>
                        <Button Content="Audit Log"
                                Command="{Binding NavigateAuditCommand}"
                                Style="{StaticResource SidebarButtonStyle}"

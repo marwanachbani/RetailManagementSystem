@@ -47,6 +47,8 @@ using RMS.Modules.Backup.Application.Contracts;
 using RMS.Modules.Backup.Infrastructure;
 using RMS.Modules.Notifications.Application;
 using RMS.Modules.Notifications.Infrastructure;
+using RMS.Modules.Printing.Application;
+using RMS.Modules.Printing.Infrastructure;
 using RMS.WPF.Backup;
 using RMS.WPF.Notifications;
 using RMS.WPF.ViewModels;
@@ -335,6 +337,11 @@ public partial class App : Application
         services.AddNotificationsInfrastructure();
         services.AddNotificationsMigrations(ConnectionString);
 
+        // Printing & Document Management module — fully wired vertical slice.
+        services.AddPrintingModule();
+        services.AddPrintingInfrastructure();
+        services.AddPrintingMigrations(ConnectionString);
+
         // Dashboard queries live in the WPF assembly — register MediatR handlers.
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(App).Assembly));
 
@@ -416,6 +423,10 @@ public partial class App : Application
         // Settings module — WPF shell.
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<SettingsView>();
+
+        // Printing & Document Management module — WPF shell.
+        services.AddTransient<PrintingToolsViewModel>();
+        services.AddTransient<Views.PrintingToolsView>();
 
         // Notifications module — WPF shell.
         services.AddTransient<NotificationCenterViewModel>();

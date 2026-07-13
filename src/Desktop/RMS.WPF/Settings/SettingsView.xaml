@@ -29,6 +29,9 @@
         <DataTemplate DataType="{x:Type settings:ReportSettingsViewModel}">
             <settings:ReportSettingsView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type settings:PrinterSettingsViewModel}">
+            <settings:PrinterSettingsView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type settings:StorageSettingsViewModel}">
             <settings:StorageSettingsView />
         </DataTemplate>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>RMS.Modules.Printing.Application</RootNamespace>
+    <AssemblyName>RMS.Modules.Printing.Application</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\RMS.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\Domain\RMS.Modules.Printing.Domain.csproj" />
+    <ProjectReference Include="..\..\Settings\Domain\RMS.Modules.Settings.Domain.csproj" />
+    <ProjectReference Include="..\..\Settings\Application\RMS.Modules.Settings.Application.csproj" />
+  </ItemGroup>
+
+</Project>

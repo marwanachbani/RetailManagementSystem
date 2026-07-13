@@ -15,6 +15,7 @@ public sealed class SettingsModel
     public ReportSettingsModel Report { get; set; } = new();
     public BackupSettingsModel Backup { get; set; } = new();
     public ApplicationSettingsModel Application { get; set; } = new();
+    public PrinterSettingsModel Printer { get; set; } = new();
     public List<FolderSettingModel> Storage { get; set; } = new();
 }
 
@@ -112,6 +113,22 @@ public sealed class ApplicationSettingsModel
     public bool RememberLastUser { get; set; }
     public bool AutoSave { get; set; }
     public int SessionTimeout { get; set; }
+}
+
+public sealed class PrinterSettingsModel
+{
+    public string DefaultPrinter { get; set; } = string.Empty;
+    public string ReceiptPrinter { get; set; } = string.Empty;
+    public string InvoicePrinter { get; set; } = string.Empty;
+    public string LabelPrinter { get; set; } = string.Empty;
+    public string ReportPrinter { get; set; } = string.Empty;
+    public bool AutoPrint { get; set; }
+    public int Copies { get; set; } = 1;
+    public int PaperWidth { get; set; } = 80;
+    public string Orientation { get; set; } = "Portrait";
+    public int MarginMm { get; set; } = 10;
+    public bool CutPaper { get; set; } = true;
+    public bool OpenDrawer { get; set; }
 }
 
 /// <summary>

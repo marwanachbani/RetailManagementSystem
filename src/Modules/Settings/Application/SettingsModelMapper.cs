@@ -108,6 +108,21 @@ public static class SettingsModelMapper
                 RememberLastUser = Bool(SettingCatalog.Keys.ApplicationRememberLastUser),
                 AutoSave = Bool(SettingCatalog.Keys.ApplicationAutoSave),
                 SessionTimeout = Int(SettingCatalog.Keys.ApplicationSessionTimeout)
+            },
+            Printer = new PrinterSettingsModel
+            {
+                DefaultPrinter = Str(SettingCatalog.Keys.PrinterDefault),
+                ReceiptPrinter = Str(SettingCatalog.Keys.PrinterReceipt),
+                InvoicePrinter = Str(SettingCatalog.Keys.PrinterInvoice),
+                LabelPrinter = Str(SettingCatalog.Keys.PrinterLabel),
+                ReportPrinter = Str(SettingCatalog.Keys.PrinterReport),
+                AutoPrint = Bool(SettingCatalog.Keys.PrinterAutoPrint),
+                Copies = Int(SettingCatalog.Keys.PrinterCopies),
+                PaperWidth = Int(SettingCatalog.Keys.PrinterPaperWidth),
+                Orientation = Str(SettingCatalog.Keys.PrinterOrientation),
+                MarginMm = Int(SettingCatalog.Keys.PrinterMarginMm),
+                CutPaper = Bool(SettingCatalog.Keys.PrinterCutPaper),
+                OpenDrawer = Bool(SettingCatalog.Keys.PrinterOpenDrawer)
             }
         };
 
@@ -218,5 +233,21 @@ public static class SettingsModelMapper
         [SettingCatalog.Keys.ApplicationRememberLastUser] = m.RememberLastUser.ToString().ToLowerInvariant(),
         [SettingCatalog.Keys.ApplicationAutoSave] = m.AutoSave.ToString().ToLowerInvariant(),
         [SettingCatalog.Keys.ApplicationSessionTimeout] = m.SessionTimeout.ToString()
+    };
+
+    public static Dictionary<string, string?> PrinterPairs(PrinterSettingsModel m) => new()
+    {
+        [SettingCatalog.Keys.PrinterDefault] = m.DefaultPrinter,
+        [SettingCatalog.Keys.PrinterReceipt] = m.ReceiptPrinter,
+        [SettingCatalog.Keys.PrinterInvoice] = m.InvoicePrinter,
+        [SettingCatalog.Keys.PrinterLabel] = m.LabelPrinter,
+        [SettingCatalog.Keys.PrinterReport] = m.ReportPrinter,
+        [SettingCatalog.Keys.PrinterAutoPrint] = m.AutoPrint.ToString().ToLowerInvariant(),
+        [SettingCatalog.Keys.PrinterCopies] = m.Copies.ToString(),
+        [SettingCatalog.Keys.PrinterPaperWidth] = m.PaperWidth.ToString(),
+        [SettingCatalog.Keys.PrinterOrientation] = m.Orientation,
+        [SettingCatalog.Keys.PrinterMarginMm] = m.MarginMm.ToString(),
+        [SettingCatalog.Keys.PrinterCutPaper] = m.CutPaper.ToString().ToLowerInvariant(),
+        [SettingCatalog.Keys.PrinterOpenDrawer] = m.OpenDrawer.ToString().ToLowerInvariant()
     };
 }

@@ -7,9 +7,9 @@ namespace RMS.UnitTests.Settings;
 public class SettingCatalogTests
 {
     [Fact]
-    public void Catalog_Should_ContainTenCategories()
+    public void Catalog_Should_ContainElevenCategories()
     {
-        SettingCatalog.Categories.Should().HaveCount(10);
+        SettingCatalog.Categories.Should().HaveCount(11);
         SettingCatalog.Categories.Select(c => c.Name).Should().OnlyHaveUniqueItems();
     }
 

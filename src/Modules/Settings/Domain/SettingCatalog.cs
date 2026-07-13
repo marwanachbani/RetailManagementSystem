@@ -27,6 +27,7 @@ public static class SettingCatalog
     public const string CategoryStorage = "Storage";
     public const string CategoryBackup = "Backup";
     public const string CategoryApplication = "Application";
+    public const string CategoryPrinter = "Printers";
 
     // ------------------------------------------------------------------
     // Setting keys
@@ -123,6 +124,20 @@ public static class SettingCatalog
         public const string ApplicationRememberLastUser = "Application.RememberLastUser";
         public const string ApplicationAutoSave = "Application.AutoSave";
         public const string ApplicationSessionTimeout = "Application.SessionTimeout";
+
+        // Printers
+        public const string PrinterDefault = "Printer.Default";
+        public const string PrinterReceipt = "Printer.Receipt";
+        public const string PrinterInvoice = "Printer.Invoice";
+        public const string PrinterLabel = "Printer.Label";
+        public const string PrinterReport = "Printer.Report";
+        public const string PrinterAutoPrint = "Printer.AutoPrint";
+        public const string PrinterCopies = "Printer.Copies";
+        public const string PrinterPaperWidth = "Printer.PaperWidth";
+        public const string PrinterOrientation = "Printer.Orientation";
+        public const string PrinterMarginMm = "Printer.MarginMm";
+        public const string PrinterCutPaper = "Printer.CutPaper";
+        public const string PrinterOpenDrawer = "Printer.OpenDrawer";
     }
 
     public sealed record SettingDefinition(
@@ -147,7 +162,8 @@ public static class SettingCatalog
         new(7, CategoryReport, "Reports", 7),
         new(8, CategoryStorage, "File Storage", 8),
         new(9, CategoryBackup, "Backups", 9),
-        new(10, CategoryApplication, "Appearance", 10)
+        new(10, CategoryApplication, "Appearance", 10),
+        new(11, CategoryPrinter, "Printers", 11)
     };
 
     public static IReadOnlyList<SettingDefinition> Defaults { get; } = BuildDefaults();
@@ -246,6 +262,20 @@ public static class SettingCatalog
         d.Add(new(Keys.ApplicationRememberLastUser, CategoryApplication, "true", SettingDataType.Boolean, "Remember Last User"));
         d.Add(new(Keys.ApplicationAutoSave, CategoryApplication, "true", SettingDataType.Boolean, "Auto Save"));
         d.Add(new(Keys.ApplicationSessionTimeout, CategoryApplication, "30", SettingDataType.Integer, "Session Timeout (minutes)"));
+
+        // Printers
+        d.Add(new(Keys.PrinterDefault, CategoryPrinter, "", SettingDataType.String, "Default Printer", Description: "Windows/thermal printer used when no document-specific printer is set."));
+        d.Add(new(Keys.PrinterReceipt, CategoryPrinter, "", SettingDataType.String, "Receipt Printer", Description: "Thermal POS printer for sales receipts."));
+        d.Add(new(Keys.PrinterInvoice, CategoryPrinter, "", SettingDataType.String, "Invoice Printer", Description: "A4/letter printer for invoices and orders."));
+        d.Add(new(Keys.PrinterLabel, CategoryPrinter, "", SettingDataType.String, "Label Printer", Description: "Printer used for barcode, product and shelf labels."));
+        d.Add(new(Keys.PrinterReport, CategoryPrinter, "", SettingDataType.String, "Report Printer", Description: "Printer used for reports and statements."));
+        d.Add(new(Keys.PrinterAutoPrint, CategoryPrinter, "false", SettingDataType.Boolean, "Automatic Printing", Description: "Automatically print documents after they are generated."));
+        d.Add(new(Keys.PrinterCopies, CategoryPrinter, "1", SettingDataType.Integer, "Copies", Description: "Number of copies to print by default."));
+        d.Add(new(Keys.PrinterPaperWidth, CategoryPrinter, "80", SettingDataType.Integer, "Paper Width (mm)", Description: "Default paper width in millimetres."));
+        d.Add(new(Keys.PrinterOrientation, CategoryPrinter, "Portrait", SettingDataType.String, "Orientation", Options: new[] { "Portrait", "Landscape" }));
+        d.Add(new(Keys.PrinterMarginMm, CategoryPrinter, "10", SettingDataType.Integer, "Margins (mm)"));
+        d.Add(new(Keys.PrinterCutPaper, CategoryPrinter, "true", SettingDataType.Boolean, "Cut Paper (Thermal)", Description: "Send a paper-cut command after thermal receipts."));
+        d.Add(new(Keys.PrinterOpenDrawer, CategoryPrinter, "false", SettingDataType.Boolean, "Open Cash Drawer (Thermal)", Description: "Kick the connected cash drawer after a receipt."));
 
         return d;
     }

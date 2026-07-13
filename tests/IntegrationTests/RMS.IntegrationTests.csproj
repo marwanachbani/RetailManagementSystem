@@ -55,6 +55,12 @@
     <ProjectReference Include="..\..\src\Modules\Backup\Domain\RMS.Modules.Backup.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Backup\Application\RMS.Modules.Backup.Application.csproj" />
     <ProjectReference Include="..\..\src\Modules\Backup\Infrastructure\RMS.Modules.Backup.Infrastructure.csproj" />
+
+    <ProjectReference Include="..\..\src\Modules\Settings\Infrastructure\RMS.Modules.Settings.Infrastructure.csproj" />
+
+    <ProjectReference Include="..\..\src\Modules\Printing\Domain\RMS.Modules.Printing.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Printing\Application\RMS.Modules.Printing.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Printing\Infrastructure\RMS.Modules.Printing.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

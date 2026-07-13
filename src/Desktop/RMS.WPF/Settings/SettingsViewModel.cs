@@ -2,36 +2,32 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using MediatR;
 using RMS.BuildingBlocks.Results;
+using RMS.Modules.Printing.Application.Contracts;
 using RMS.Modules.Settings.Application.GetSettings;
 using RMS.Modules.Settings.Application.Models;
-using RMS.WPF.ViewModels;
 using RMS.WPF.Commands;
 using RMS.WPF.Services;
+using RMS.WPF.ViewModels;
 
 namespace RMS.WPF.Settings;
 
-/// <summary>
-/// Master view model for the Settings module. Hosts every section and distributes
-/// the loaded <see cref="SettingsModel"/> to each section. The toolbar in the view
-/// binds to the <see cref="SelectedSection"/>'s Save/Cancel/Restore commands, so
-/// every page exposes the same actions plus an unsaved-changes indicator.
-/// </summary>
 public sealed class SettingsViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
     private readonly IDialogService _dialogService;
-    private readonly IFolderBrowserService _folderBrowser;
+    private readonly IPrintingService _printing;
     private SettingsSectionViewModelBase _selectedSection;
     private bool _isLoading;
 
     public SettingsViewModel(
         IMediator mediator,
         IDialogService dialogService,
+        IPrintingService printing,
         IFolderBrowserService folderBrowser)
     {
         _mediator = mediator;
         _dialogService = dialogService;
-        _folderBrowser = folderBrowser;
+        _printing = printing;
 
         Sections = new ObservableCollection<SettingsSectionViewModelBase>
         {
@@ -42,9 +38,10 @@ public sealed class SettingsViewModel : ViewModelBase
             new InventorySettingsViewModel(_mediator, _dialogService),
             new PurchasingSettingsViewModel(_mediator, _dialogService),
             new ReportSettingsViewModel(_mediator, _dialogService),
-            new StorageSettingsViewModel(_mediator, _dialogService, _folderBrowser),
+            new StorageSettingsViewModel(_mediator, _dialogService, folderBrowser),
             new BackupSettingsViewModel(_mediator, _dialogService),
-            new AppearanceSettingsViewModel(_mediator, _dialogService)
+            new AppearanceSettingsViewModel(_mediator, _dialogService),
+            new PrinterSettingsViewModel(_mediator, _dialogService, _printing)
         };
 
         _selectedSection = Sections[0];

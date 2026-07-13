@@ -1,0 +1,28 @@
+<Window x:Class="RMS.WPF.Printing.PrinterSelectionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        Title="Select Printer"
+        Height="240" Width="420"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}"
+        ResizeMode="NoResize">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Choose a printer for this document:" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+        <ComboBox x:Name="PrinterCombo" Grid.Row="1" Style="{StaticResource ModernComboBoxStyle}" IsEditable="True" Margin="0,0,0,16"/>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button Content="OK" x:Name="OkButton" Style="{StaticResource PrimaryButtonStyle}" Width="90" Margin="0,0,8,0" Click="OkButton_Click" IsDefault="True"/>
+            <Button Content="Cancel" x:Name="CancelButton" Style="{StaticResource SecondaryButtonStyle}" Width="90" Click="CancelButton_Click" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

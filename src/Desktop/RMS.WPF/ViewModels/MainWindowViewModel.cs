@@ -37,6 +37,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         AuditLogViewModel auditLogViewModel,
         BackupAndRestoreViewModel backupAndRestoreViewModel,
         NotificationCenterViewModel notificationCenterViewModel,
+        PrintingToolsViewModel printingToolsViewModel,
         IEventBus eventBus,
         ICurrentSessionService currentSessionService,
         INotificationRepository notificationRepository)
@@ -56,6 +57,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         AuditLogViewModel = auditLogViewModel;
         BackupAndRestoreViewModel = backupAndRestoreViewModel;
         NotificationCenterViewModel = notificationCenterViewModel;
+        PrintingToolsViewModel = printingToolsViewModel;
         NavigateDashboardCommand = new RelayCommand(_ => ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard"));
         NavigateProductsCommand = new RelayCommand(_ => ShowView(ProductListViewModel, "Products", "Home / Products"));
         NavigateInventoryCommand = new RelayCommand(_ => ShowView(InventoryListViewModel, "Inventory", "Home / Inventory"));
@@ -67,6 +69,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         NavigateSettingsCommand = new RelayCommand(_ => ShowView(SettingsViewModel, "Settings", "Home / Settings"));
         NavigateAuditCommand = new RelayCommand(_ => ShowView(AuditLogViewModel, "Audit Log", "Home / Audit Log"));
         NavigateBackupCommand = new RelayCommand(_ => ShowView(BackupAndRestoreViewModel, "Backup & Restore", "Home / Administration / Backup & Restore"));
+        NavigatePrintingCommand = new RelayCommand(_ => ShowView(PrintingToolsViewModel, "Printing", "Home / Printing"));
         NavigateNotificationsCommand = new RelayCommand(_ => OpenNotificationCenter());
         LogoutCommand = new RelayCommand(_ => Logout());
 
@@ -89,6 +92,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public AuditLogViewModel AuditLogViewModel { get; }
     public BackupAndRestoreViewModel BackupAndRestoreViewModel { get; }
     public NotificationCenterViewModel NotificationCenterViewModel { get; }
+    public PrintingToolsViewModel PrintingToolsViewModel { get; }
 
     public object? CurrentViewModel
     {
@@ -161,6 +165,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ICommand NavigateSettingsCommand { get; }
     public ICommand NavigateAuditCommand { get; }
     public ICommand NavigateBackupCommand { get; }
+    public ICommand NavigatePrintingCommand { get; }
     public ICommand NavigateNotificationsCommand { get; }
     public ICommand LogoutCommand { get; }
 

@@ -74,6 +74,10 @@
     <ProjectReference Include="..\..\Modules\Notifications\Domain\RMS.Modules.Notifications.Domain.csproj" />
     <ProjectReference Include="..\..\Modules\Notifications\Application\RMS.Modules.Notifications.Application.csproj" />
     <ProjectReference Include="..\..\Modules\Notifications\Infrastructure\RMS.Modules.Notifications.Infrastructure.csproj" />
+
+    <ProjectReference Include="..\..\Modules\Printing\Domain\RMS.Modules.Printing.Domain.csproj" />
+    <ProjectReference Include="..\..\Modules\Printing\Application\RMS.Modules.Printing.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Printing\Infrastructure\RMS.Modules.Printing.Infrastructure.csproj" />
   </ItemGroup>
   
 </Project>
