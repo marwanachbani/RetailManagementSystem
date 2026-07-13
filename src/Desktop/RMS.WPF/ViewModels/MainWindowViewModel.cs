@@ -3,8 +3,10 @@ using System.Windows.Input;
 using RMS.BuildingBlocks.EventBus;
 using RMS.BuildingBlocks.Persistence;
 using RMS.Modules.Identity.Application.IntegrationEvents;
+using RMS.Modules.Notifications.Application.Contracts;
 using RMS.WPF.Backup;
 using RMS.WPF.Commands;
+using RMS.WPF.Notifications;
 using RMS.WPF.Services;
 using RMS.WPF.Settings;
 
@@ -14,11 +16,13 @@ public sealed class MainWindowViewModel : ViewModelBase
 {
     private readonly IEventBus _eventBus;
     private readonly ICurrentSessionService _currentSessionService;
+    private readonly INotificationRepository _notificationRepository;
     private object? _currentViewModel;
     private string _currentViewTitle = "Dashboard";
     private string _currentBreadcrumb = "Home / Dashboard";
     private string _currentUserName = "Operator";
     private string _statusMessage = "Ready";
+    private int _unreadNotificationCount;
 
     public MainWindowViewModel(
         DashboardViewModel dashboardViewModel,
@@ -32,11 +36,14 @@ public sealed class MainWindowViewModel : ViewModelBase
         SettingsViewModel settingsViewModel,
         AuditLogViewModel auditLogViewModel,
         BackupAndRestoreViewModel backupAndRestoreViewModel,
+        NotificationCenterViewModel notificationCenterViewModel,
         IEventBus eventBus,
-        ICurrentSessionService currentSessionService)
+        ICurrentSessionService currentSessionService,
+        INotificationRepository notificationRepository)
     {
         _eventBus = eventBus;
         _currentSessionService = currentSessionService;
+        _notificationRepository = notificationRepository;
         DashboardViewModel = dashboardViewModel;
         ProductListViewModel = productListViewModel;
         InventoryListViewModel = inventoryListViewModel;
@@ -48,6 +55,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         SettingsViewModel = settingsViewModel;
         AuditLogViewModel = auditLogViewModel;
         BackupAndRestoreViewModel = backupAndRestoreViewModel;
+        NotificationCenterViewModel = notificationCenterViewModel;
         NavigateDashboardCommand = new RelayCommand(_ => ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard"));
         NavigateProductsCommand = new RelayCommand(_ => ShowView(ProductListViewModel, "Products", "Home / Products"));
         NavigateInventoryCommand = new RelayCommand(_ => ShowView(InventoryListViewModel, "Inventory", "Home / Inventory"));
@@ -59,9 +67,12 @@ public sealed class MainWindowViewModel : ViewModelBase
         NavigateSettingsCommand = new RelayCommand(_ => ShowView(SettingsViewModel, "Settings", "Home / Settings"));
         NavigateAuditCommand = new RelayCommand(_ => ShowView(AuditLogViewModel, "Audit Log", "Home / Audit Log"));
         NavigateBackupCommand = new RelayCommand(_ => ShowView(BackupAndRestoreViewModel, "Backup & Restore", "Home / Administration / Backup & Restore"));
+        NavigateNotificationsCommand = new RelayCommand(_ => OpenNotificationCenter());
         LogoutCommand = new RelayCommand(_ => Logout());
 
         WireDashboardQuickActions(dashboardViewModel);
+
+        _ = RefreshUnreadCountAsync();
 
         ShowView(DashboardViewModel, "Dashboard", "Home / Dashboard");
     }
@@ -77,6 +88,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public SettingsViewModel SettingsViewModel { get; }
     public AuditLogViewModel AuditLogViewModel { get; }
     public BackupAndRestoreViewModel BackupAndRestoreViewModel { get; }
+    public NotificationCenterViewModel NotificationCenterViewModel { get; }
 
     public object? CurrentViewModel
     {
@@ -128,6 +140,16 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public int UnreadNotificationCount
+    {
+        get => _unreadNotificationCount;
+        private set
+        {
+            _unreadNotificationCount = value;
+            OnPropertyChanged();
+        }
+    }
+
     public ICommand NavigateDashboardCommand { get; }
     public ICommand NavigateProductsCommand { get; }
     public ICommand NavigateInventoryCommand { get; }
@@ -139,6 +161,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ICommand NavigateSettingsCommand { get; }
     public ICommand NavigateAuditCommand { get; }
     public ICommand NavigateBackupCommand { get; }
+    public ICommand NavigateNotificationsCommand { get; }
     public ICommand LogoutCommand { get; }
 
     public event EventHandler? RequestLogout;
@@ -149,6 +172,31 @@ public sealed class MainWindowViewModel : ViewModelBase
         CurrentViewTitle = title;
         CurrentBreadcrumb = breadcrumb;
         StatusMessage = $"{title} ready";
+    }
+
+    private void OpenNotificationCenter()
+    {
+        var window = new NotificationCenterView
+        {
+            Owner = Application.Current.MainWindow,
+            DataContext = NotificationCenterViewModel
+        };
+        window.ShowDialog();
+        _ = RefreshUnreadCountAsync();
+    }
+
+    private async Task RefreshUnreadCountAsync()
+    {
+        try
+        {
+            UnreadNotificationCount = _currentSessionService.IsAuthenticated
+                ? await _notificationRepository.GetUnreadCountByUserIdAsync(_currentSessionService.UserId)
+                : await _notificationRepository.GetUnreadCountAsync();
+        }
+        catch
+        {
+            UnreadNotificationCount = 0;
+        }
     }
 
     private void Logout()

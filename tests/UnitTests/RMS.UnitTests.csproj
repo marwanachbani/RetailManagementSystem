@@ -31,6 +31,9 @@
 
     <ProjectReference Include="..\..\src\Modules\Backup\Domain\RMS.Modules.Backup.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Backup\Application\RMS.Modules.Backup.Application.csproj" />
+
+    <ProjectReference Include="..\..\src\Modules\Notifications\Domain\RMS.Modules.Notifications.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Notifications\Application\RMS.Modules.Notifications.Application.csproj" />
   </ItemGroup>
 
 </Project>

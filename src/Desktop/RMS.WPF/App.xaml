@@ -475,5 +475,26 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="FlatButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DropShadowEffect x:Key="DropShadowEffect"
+                          ShadowDepth="2"
+                          BlurRadius="8"
+                          Opacity="0.15"
+                          Color="#000000"/>
+
     </Application.Resources>
 </Application>

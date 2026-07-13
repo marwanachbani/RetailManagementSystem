@@ -1,0 +1,113 @@
+<Window x:Class="RMS.WPF.Notifications.NotificationCenterView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewModels="clr-namespace:RMS.WPF.Notifications"
+        Title="Notification Center"
+        Height="500"
+        Width="700"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}"
+        Style="{StaticResource ModernWindowStyle}">
+    <Window.DataContext>
+        <viewModels:NotificationCenterViewModel/>
+    </Window.DataContext>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Notification Center"
+                   FontSize="18"
+                   FontWeight="Bold"
+                   Foreground="{StaticResource TextPrimaryBrush}"
+                   Margin="0,0,0,12"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBox Width="200"
+                     Margin="0,0,8,0"
+                     VerticalAlignment="Center"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     ToolTip="Search notifications"/>
+            <ComboBox Width="120"
+                      Margin="0,0,8,0"
+                      VerticalAlignment="Center"
+                      ItemsSource="{Binding Severities}"
+                      SelectedItem="{Binding SelectedSeverity}"
+                      DisplayMemberPath="ToString">
+                <ComboBox.SelectedValuePath>ToString</ComboBox.SelectedValuePath>
+            </ComboBox>
+            <ComboBox Width="120"
+                      Margin="0,0,8,0"
+                      VerticalAlignment="Center"
+                      ItemsSource="{Binding Modules}"
+                      SelectedItem="{Binding SelectedModule}"
+                      Text="{Binding SelectedModule, Mode=TwoWay}"/>
+            <CheckBox Content="Read"
+                      VerticalAlignment="Center"
+                      IsChecked="{Binding ShowRead}"/>
+            <CheckBox Content="Unread"
+                      VerticalAlignment="Center"
+                      Margin="8,0,0,0"
+                      IsChecked="{Binding ShowUnread}"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="None"
+                  RowBackground="Transparent"
+                  Background="Transparent"
+                  ItemsSource="{Binding Notifications}"
+                  SelectedItem="{Binding SelectedNotification}"
+                  Margin="0,0,0,8">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="80"/>
+                <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
+                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="100"/>
+                <DataGridTextColumn Header="Module" Binding="{Binding RelatedModule}" Width="100"/>
+                <DataGridTextColumn Header="Date" Binding="{Binding CreatedOn, StringFormat=yyyy-MM-dd HH:mm}" Width="120"/>
+                <DataGridCheckBoxColumn Header="Read" Binding="{Binding IsRead}" Width="50"/>
+            </DataGrid.Columns>
+            <DataGrid.Resources>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsRead}" Value="False">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Text="{Binding UnreadCount, StringFormat='{}Unread: {0}'}"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       Margin="0,0,12,0"/>
+            <Button Content="Mark As Read"
+                    Command="{Binding MarkAsReadCommand}"
+                    Margin="0,0,8,0"
+                    Padding="12,6"/>
+            <Button Content="Mark All As Read"
+                    Command="{Binding MarkAllAsReadCommand}"
+                    Margin="0,0,8,0"
+                    Padding="12,6"/>
+            <Button Content="Delete"
+                    Command="{Binding DeleteNotificationCommand}"
+                    Margin="0,0,8,0"
+                    Padding="12,6"/>
+            <Button Content="Clear Read"
+                    Command="{Binding ClearReadNotificationsCommand}"
+                    Margin="0,0,8,0"
+                    Padding="12,6"/>
+            <Button Content="Close"
+                    Command="{Binding CloseCommand}"
+                    Padding="12,6"/>
+        </StackPanel>
+    </Grid>
+</Window>

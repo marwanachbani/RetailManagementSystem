@@ -161,6 +161,21 @@
                         <Border Background="{StaticResource PrimaryLightBrush}" CornerRadius="999" Padding="8,4">
                             <TextBlock Text="Online" FontSize="11" Foreground="{StaticResource PrimaryDarkBrush}"/>
                         </Border>
+                        <Button Command="{Binding NavigateNotificationsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}"
+                                Margin="12,0,0,0"
+                                Padding="8,4">
+                            <Grid>
+                                <TextBlock Text="Notifications" FontSize="11"/>
+                                <TextBlock Text="{Binding UnreadNotificationCount, StringFormat=({0})}"
+                                           FontSize="10"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource PrimaryDarkBrush}"
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,0,0"/>
+                            </Grid>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>

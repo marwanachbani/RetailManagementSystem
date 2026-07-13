@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>RMS.Modules.Notifications.Infrastructure</RootNamespace>
+    <AssemblyName>RMS.Modules.Notifications.Infrastructure</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+    <PackageReference Include="FluentMigrator.Runner" Version="6.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\RMS.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\Application\RMS.Modules.Notifications.Application.csproj" />
+  </ItemGroup>
+
+</Project>

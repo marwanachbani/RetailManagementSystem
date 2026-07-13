@@ -70,6 +70,10 @@
     <ProjectReference Include="..\..\Modules\Backup\Domain\RMS.Modules.Backup.Domain.csproj" />
     <ProjectReference Include="..\..\Modules\Backup\Application\RMS.Modules.Backup.Application.csproj" />
     <ProjectReference Include="..\..\Modules\Backup\Infrastructure\RMS.Modules.Backup.Infrastructure.csproj" />
+
+    <ProjectReference Include="..\..\Modules\Notifications\Domain\RMS.Modules.Notifications.Domain.csproj" />
+    <ProjectReference Include="..\..\Modules\Notifications\Application\RMS.Modules.Notifications.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Notifications\Infrastructure\RMS.Modules.Notifications.Infrastructure.csproj" />
   </ItemGroup>
   
 </Project>

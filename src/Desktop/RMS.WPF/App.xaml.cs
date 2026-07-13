@@ -45,7 +45,10 @@ using RMS.Modules.Audit.Infrastructure;
 using RMS.Modules.Backup.Application;
 using RMS.Modules.Backup.Application.Contracts;
 using RMS.Modules.Backup.Infrastructure;
+using RMS.Modules.Notifications.Application;
+using RMS.Modules.Notifications.Infrastructure;
 using RMS.WPF.Backup;
+using RMS.WPF.Notifications;
 using RMS.WPF.ViewModels;
 using RMS.WPF.Settings;
 using RMS.WPF.Services;
@@ -327,6 +330,11 @@ public partial class App : Application
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
         services.AddSingleton<IBackupSettingsProvider, BackupSettingsProvider>();
 
+        // Notifications module — fully wired vertical slice.
+        services.AddNotificationsModule();
+        services.AddNotificationsInfrastructure();
+        services.AddNotificationsMigrations(ConnectionString);
+
         // Dashboard queries live in the WPF assembly — register MediatR handlers.
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(App).Assembly));
 
@@ -408,6 +416,11 @@ public partial class App : Application
         // Settings module — WPF shell.
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<SettingsView>();
+
+        // Notifications module — WPF shell.
+        services.AddTransient<NotificationCenterViewModel>();
+        services.AddTransient<NotificationCenterView>();
+        services.AddTransient<NotificationDetailsWindow>();
     }
 }
 

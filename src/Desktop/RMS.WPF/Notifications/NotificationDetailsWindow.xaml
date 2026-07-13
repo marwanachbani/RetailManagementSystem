@@ -1,0 +1,51 @@
+<Window x:Class="RMS.WPF.Notifications.NotificationDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Notification Details"
+        Height="300"
+        Width="500"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}"
+        Style="{StaticResource ModernWindowStyle}">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="{Binding SelectedNotification.Title}"
+                   FontSize="16"
+                   FontWeight="Bold"
+                   Foreground="{StaticResource TextPrimaryBrush}"
+                   Margin="0,0,0,8"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12">
+            <TextBlock Text="{Binding SelectedNotification.Severity}"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       Margin="0,0,16,0"/>
+            <TextBlock Text="{Binding SelectedNotification.Category}"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       Margin="0,0,16,0"/>
+            <TextBlock Text="{Binding SelectedNotification.RelatedModule}"
+                       Foreground="{StaticResource TextSecondaryBrush}"/>
+        </StackPanel>
+
+        <TextBox Grid.Row="2"
+                 Text="{Binding SelectedNotification.Message}"
+                 TextWrapping="Wrap"
+                 IsReadOnly="True"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 Foreground="{StaticResource TextPrimaryBrush}"
+                 VerticalScrollBarVisibility="Auto"
+                 Margin="0,0,0,12"/>
+
+        <Button Grid.Row="3"
+                Content="Close"
+                HorizontalAlignment="Right"
+                Padding="24,8"
+                Click="OnCloseClicked"/>
+    </Grid>
+</Window>
